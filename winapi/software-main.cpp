@@ -1,20 +1,5 @@
 #include <Windows.h> // Windows API header file
-
-// Window procedure. The function is used to process messages sent to the window (like button clicks, key presses, etc.)
-// HWND hWnd: The handle to the window
-// UINT uMsg: The message sent to the window
-// WPARAM wParam: Additional message information
-// LPARAM lParam: Additional message information
-LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-// This is a function declaration for creating a new window class, which defines the properties and behavior of a window
-// HBRUSH BGColor: The background color of the window
-// HCURSOR Cursor: The cursor of the window
-// HINSTANCE hInst: The instance of the window
-// HICON Icon: The icon of the window
-// LPCWSTR Name: The name of the window class
-// WNDPROC Procedure: The window procedure of the window
-WNDCLASS NewWindowClass(HBRUSH BGColor, HCURSOR Cursor, HINSTANCE hInst, HICON Icon, LPCWSTR Name, WNDPROC Procedure);
+#include "software-definitions.h" // Include the software definitions header file
 
 // The entry point of the program
 // HINSTANCE hInstance: The instance of the program
@@ -89,8 +74,33 @@ WNDCLASS NewWindowClass(HBRUSH BGColor, HCURSOR Cursor, HINSTANCE hInst, HICON I
 LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	// Process the message
 	switch (uMsg) {
+	case WM_COMMAND:
+		switch (LOWORD(wParam)) {
+			case OnMenuClicked:
+				MessageBox(hWnd, L"New menu item clicked!", L"Menu", MB_OK);
+				break;
+			case 2:
+				MessageBox(hWnd, L"Open menu item clicked!", L"Menu", MB_OK);
+				break;
+			case 3:
+				MessageBox(hWnd, L"Save menu item clicked!", L"Menu", MB_OK);
+				break;
+			case 4:
+				DestroyWindow(hWnd);
+				break;
+			case 5:
+				MessageBox(hWnd, L"Cut menu item clicked!", L"Menu", MB_OK);
+				break;
+			case 6:
+				MessageBox(hWnd, L"Copy menu item clicked!", L"Menu", MB_OK);
+				break;
+			case 7:
+				MessageBox(hWnd, L"Paste menu item clicked!", L"Menu", MB_OK);
+				break;
+		}
+		break;
 		case WM_CLOSE:
-			DestroyWindow(hWnd);
+			MainWndAddMenus(hWnd);
 			break;
 		case WM_DESTROY:
 			PostQuitMessage(0);
@@ -98,4 +108,27 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		default:
 			return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	}
+}
+
+void MainWndAddMenus(HWND hWnd) {
+	HMENU hMenu = CreateMenu(); // Create a new menu
+	// Add a "File" menu
+	HMENU hFileMenu = CreateMenu();
+	// hFileMenu is the handle to the "File" menu
+	// MF_STRING is the menu item type
+	// 1 is the ID of the menu item
+	// L"New" is the text of the menu item
+	AppendMenu(hFileMenu, MF_STRING, OnMenuClicked, L"New");
+	AppendMenu(hFileMenu, MF_STRING, 2, L"Open");
+	AppendMenu(hFileMenu, MF_STRING, 3, L"Save");
+	AppendMenu(hFileMenu, MF_STRING, 4, L"Exit");
+	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, L"File");
+	// Add an "Edit" menu
+	HMENU hEditMenu = CreateMenu();
+	AppendMenu(hEditMenu, MF_STRING, 5, L"Cut");
+	AppendMenu(hEditMenu, MF_STRING, 6, L"Copy");
+	AppendMenu(hEditMenu, MF_STRING, 7, L"Paste");
+	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hEditMenu, L"Edit");
+	// Set the menu to the window
+	SetMenu(hWnd, hMenu);
 }
