@@ -1,0 +1,7 @@
+﻿  software_main.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+D:\Projects\winapi\winapi\software_main.cpp(71): warning C4715: 'SoftwareMainProcedure': not all control paths return a value
+  All 3 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  winapi.vcxproj -> D:\Projects\winapi\x64\Release\winapi.exe
