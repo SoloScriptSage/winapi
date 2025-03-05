@@ -17,4 +17,8 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 // WNDPROC Procedure: The window procedure of the window
 WNDCLASS NewWindowClass(HBRUSH BGColor, HCURSOR Cursor, HINSTANCE hInst, HICON Icon, LPCWSTR Name, WNDPROC Procedure);
 
+// This is a function declaration for adding menus to the main window
 void MainWndAddMenus(HWND hWnd);
+
+// This is a function declaration for adding widgets to the main window
+void MainWndAddWidgets(HWND hWnd);

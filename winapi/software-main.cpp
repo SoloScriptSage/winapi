@@ -35,7 +35,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		CW_USEDEFAULT, // X position
 		CW_USEDEFAULT, // Y position
 		500, // Width
-		100, // Height
+		500, // Height
 		NULL, // Parent window
 		NULL, // Menu
 		hInstance, // Instance
@@ -74,33 +74,37 @@ WNDCLASS NewWindowClass(HBRUSH BGColor, HCURSOR Cursor, HINSTANCE hInst, HICON I
 LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	// Process the message
 	switch (uMsg) {
-	case WM_COMMAND:
-		switch (LOWORD(wParam)) {
-			case OnMenuClicked:
-				MessageBox(hWnd, L"New menu item clicked!", L"Menu", MB_OK);
-				break;
-			case 2:
-				MessageBox(hWnd, L"Open menu item clicked!", L"Menu", MB_OK);
-				break;
-			case 3:
-				MessageBox(hWnd, L"Save menu item clicked!", L"Menu", MB_OK);
-				break;
-			case 4:
-				DestroyWindow(hWnd);
-				break;
-			case 5:
-				MessageBox(hWnd, L"Cut menu item clicked!", L"Menu", MB_OK);
-				break;
-			case 6:
-				MessageBox(hWnd, L"Copy menu item clicked!", L"Menu", MB_OK);
-				break;
-			case 7:
-				MessageBox(hWnd, L"Paste menu item clicked!", L"Menu", MB_OK);
-				break;
-		}
-		break;
+		case WM_COMMAND:
+			switch (LOWORD(wParam)) {
+				case 1:
+					MessageBox(hWnd, L"New menu item clicked!", L"Menu", MB_OK);
+					break;
+				case 2:
+					MessageBox(hWnd, L"Open menu item clicked!", L"Menu", MB_OK);
+					break;
+				case 3:
+					MessageBox(hWnd, L"Save menu item clicked!", L"Menu", MB_OK);
+					break;
+				case 4:
+					DestroyWindow(hWnd);
+					break;
+				case 5:
+					MessageBox(hWnd, L"Cut menu item clicked!", L"Menu", MB_OK);
+					break;
+				case 6:
+					MessageBox(hWnd, L"Copy menu item clicked!", L"Menu", MB_OK);
+					break;
+				case 7:
+					MessageBox(hWnd, L"Paste menu item clicked!", L"Menu", MB_OK);
+					break;
+			}
+			break;
 		case WM_CLOSE:
+			DestroyWindow(hWnd);
+			break;
+		case WM_CREATE:
 			MainWndAddMenus(hWnd);
+			MainWndAddWidgets(hWnd);
 			break;
 		case WM_DESTROY:
 			PostQuitMessage(0);
@@ -112,23 +116,54 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
 void MainWndAddMenus(HWND hWnd) {
 	HMENU hMenu = CreateMenu(); // Create a new menu
+	
 	// Add a "File" menu
 	HMENU hFileMenu = CreateMenu();
+	
+	HMENU hNewMenu = CreateMenu();
+	AppendMenu(hNewMenu, MF_STRING, 1, L"Project");
+	AppendMenu(hNewMenu, MF_STRING, 1, L"File");
+	AppendMenu(hNewMenu, MF_STRING, 1, L"Repository");
+
 	// hFileMenu is the handle to the "File" menu
 	// MF_STRING is the menu item type
 	// 1 is the ID of the menu item
 	// L"New" is the text of the menu item
-	AppendMenu(hFileMenu, MF_STRING, OnMenuClicked, L"New");
+	AppendMenu(hFileMenu, MF_POPUP, (UINT_PTR)hNewMenu, L"New");
 	AppendMenu(hFileMenu, MF_STRING, 2, L"Open");
 	AppendMenu(hFileMenu, MF_STRING, 3, L"Save");
+	AppendMenu(hFileMenu, MF_SEPARATOR, NULL, NULL);
 	AppendMenu(hFileMenu, MF_STRING, 4, L"Exit");
+	
+	// Add the "File" menu to the main menu
 	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, L"File");
+	
 	// Add an "Edit" menu
 	HMENU hEditMenu = CreateMenu();
 	AppendMenu(hEditMenu, MF_STRING, 5, L"Cut");
 	AppendMenu(hEditMenu, MF_STRING, 6, L"Copy");
 	AppendMenu(hEditMenu, MF_STRING, 7, L"Paste");
+	
+	// Add the "Edit" menu to the main menu
 	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hEditMenu, L"Edit");
+
 	// Set the menu to the window
 	SetMenu(hWnd, hMenu);
+}
+
+void MainWndAddWidgets(HWND hWnd) {
+	// Create a button
+	CreateWindow(
+		L"BUTTON", // Button class
+		L"Click Me", // Button text
+		WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, // Button style
+		100, // X position
+		100, // Y position
+		100, // Width
+		50, // Height
+		hWnd, // Parent window
+		(HMENU)OnMenuClicked, // Menu ID
+		NULL, // Instance
+		NULL // Additional data
+	);
 }
