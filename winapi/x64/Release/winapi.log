@@ -1,8 +1,8 @@
 ﻿  software-main.cpp
   Generating code
-  4 of 4 functions (100.0%) were compiled.
+D:\Projects\winapi\winapi\software-main.cpp(115): warning C4715: 'SoftwareMainProcedure': not all control paths return a value
+  3 of 5 functions (60.0%) were compiled, the rest were copied from previous compilation.
     1 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
-D:\Projects\winapi\winapi\software-main.cpp(111): warning C4715: 'SoftwareMainProcedure': not all control paths return a value
   Finished generating code
   winapi.vcxproj -> D:\Projects\winapi\x64\Release\winapi.exe
