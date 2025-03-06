@@ -1,6 +1,15 @@
-#pragma once
+#ifndef SOFTWARE_DEFINITIONS_H
+#define SOFTWARE_DEFINITIONS_H
 
-#define OnMenuClicked 1
+#define BTN_CLICK_ME 1001  // Button ID
+#define MENU_NEW      2001  // Menu item ID for "New"
+#define MENU_OPEN     2002  // Menu item ID for "Open"
+#define MENU_SAVE     2003  // Menu item ID for "Save"
+#define MENU_EXIT     2004  // Menu item ID for "Exit"
+#define MENU_CUT      3001  // Menu item ID for "Cut"
+#define MENU_COPY     3002  // Menu item ID for "Copy"
+#define MENU_PASTE    3003  // Menu item ID for "Paste
+
 // Window procedure. The function is used to process messages sent to the window (like button clicks, key presses, etc.)
 // HWND hWnd: The handle to the window
 // UINT uMsg: The message sent to the window
@@ -22,3 +31,12 @@ void MainWndAddMenus(HWND hWnd);
 
 // This is a function declaration for adding widgets to the main window
 void MainWndAddWidgets(HWND hWnd);
+
+
+double GetCPUUsage(); // Function to get the CPU usage
+void GetMemoryUsage(); // Function to get the memory usage
+void GetDiskUsage(); // Function to get the disk usage
+void GetNetworkUsage(); //	Function to get the network usage
+DWORD WINAPI UpdateStats(LPVOID lpParam); // Function to update the system stats
+
+#endif // SOFTWARE_DEFINITIONS_H
