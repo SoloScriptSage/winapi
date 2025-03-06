@@ -1,6 +1,55 @@
 #include <Windows.h> // Windows API header file
+#include <psapi.h> // Process Status API header file (for process information)
+#include <iphlpapi.h> // IP Helper API header file (for network information)
+#include <iostream> // Include the iostream header file (for console input/output)
+#include <thread> // Include the thread header file (for threading)
 #include "software-definitions.h" // Include the software definitions header file
 
+#pragma comment(lib, "iphlpapi.lib") // Link the iphlpapi library
+
+HWND hCPU, hRAM, hNetwork; // Handles to the CPU, RAM, and Network labels
+
+// CPU Calculation
+ULONGLONG FileTimeToInt64(const FILETIME& ft) {
+	return (((ULONGLONG)ft.dwHighDateTime) << 32) | ((ULONGLONG)ft.dwLowDateTime);
+}
+
+// Get the CPU usage
+double GetCPUUsage() {
+	static ULONGLONG prevIdle = 0, prevKernel = 0, prevUser = 0;
+	FILETIME idleTime, kernelTime, userTime;
+
+	if (!GetSystemTimes(&idleTime, &kernelTime, &userTime))
+		return -1;
+
+	ULONGLONG idle = FileTimeToInt64(idleTime);
+	ULONGLONG kernel = FileTimeToInt64(kernelTime);
+	ULONGLONG user = FileTimeToInt64(userTime);
+
+	ULONGLONG idleDiff = idle - prevIdle;
+	ULONGLONG kernelDiff = kernel - prevKernel;
+	ULONGLONG userDiff = user - prevUser;
+
+	prevIdle = idle;
+	prevKernel = kernel;
+	prevUser = user;
+
+	if ((kernelDiff + userDiff) == 0)
+		return 0;
+
+	return 100 * (1.0 - (static_cast<double>(idleDiff) / (kernelDiff + userDiff)));
+}
+
+void GetMemoryUsage(HWND hWND) {
+	MEMORYSTATUSEX statex;
+	statex.dwLength = sizeof(statex);
+
+	if (GlobalMemoryStatusEx(&statex)) {
+		wchar_t buffer[256];
+		swprintf(buffer, 256, L"Memory Load: %ld%%\n", statex.dwMemoryLoad);
+		SetWindowText(hWND, buffer);
+	}
+}
 // The entry point of the program
 // HINSTANCE hInstance: The instance of the program
 // HINSTANCE hPrevInstance: The previous instance of the program
@@ -162,7 +211,7 @@ void MainWndAddWidgets(HWND hWnd) {
 		100, // Width
 		50, // Height
 		hWnd, // Parent window
-		(HMENU)OnMenuClicked, // Menu ID
+		(HMENU)1001, // Menu ID
 		NULL, // Instance
 		NULL // Additional data
 	);
