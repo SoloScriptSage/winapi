@@ -16,38 +16,38 @@ ULONGLONG FileTimeToInt64(const FILETIME& ft) {
 
 // Get the CPU usage
 double GetCPUUsage() {
-	static ULONGLONG prevIdle = 0, prevKernel = 0, prevUser = 0;
-	FILETIME idleTime, kernelTime, userTime;
+	static ULONGLONG prevIdle = 0, prevKernel = 0, prevUser = 0; // Previous idle, kernel, and user times
+	FILETIME idleTime, kernelTime, userTime; // Idle, kernel, and user times
 
-	if (!GetSystemTimes(&idleTime, &kernelTime, &userTime))
+	if (!GetSystemTimes(&idleTime, &kernelTime, &userTime)) // Get the system times
 		return -1;
 
-	ULONGLONG idle = FileTimeToInt64(idleTime);
-	ULONGLONG kernel = FileTimeToInt64(kernelTime);
-	ULONGLONG user = FileTimeToInt64(userTime);
+	ULONGLONG idle = FileTimeToInt64(idleTime);  // Idle time
+	ULONGLONG kernel = FileTimeToInt64(kernelTime); // Kernel time
+	ULONGLONG user = FileTimeToInt64(userTime);		// User time
 
-	ULONGLONG idleDiff = idle - prevIdle;
-	ULONGLONG kernelDiff = kernel - prevKernel;
-	ULONGLONG userDiff = user - prevUser;
+	ULONGLONG idleDiff = idle - prevIdle; // Idle difference
+	ULONGLONG kernelDiff = kernel - prevKernel; // Kernel difference
+	ULONGLONG userDiff = user - prevUser; // User difference 
 
-	prevIdle = idle;
-	prevKernel = kernel;
-	prevUser = user;
+	prevIdle = idle; // Set the previous idle time
+	prevKernel = kernel; // Set the previous kernel time
+	prevUser = user; // Set the previous user time
 
-	if ((kernelDiff + userDiff) == 0)
+	if ((kernelDiff + userDiff) == 0) // If the kernel and user difference is 0, return 0
 		return 0;
 
-	return 100 * (1.0 - (static_cast<double>(idleDiff) / (kernelDiff + userDiff)));
+	return 100 * (1.0 - (static_cast<double>(idleDiff) / (kernelDiff + userDiff))); // Return the CPU usage
 }
 
 void GetMemoryUsage(HWND hWND) {
-	MEMORYSTATUSEX statex;
-	statex.dwLength = sizeof(statex);
+	MEMORYSTATUSEX statex; // Memory status
+	statex.dwLength = sizeof(statex); // Set the length of the memory status
 
-	if (GlobalMemoryStatusEx(&statex)) {
-		wchar_t buffer[256];
-		swprintf(buffer, 256, L"Memory Load: %ld%%\n", statex.dwMemoryLoad);
-		SetWindowText(hWND, buffer);
+	if (GlobalMemoryStatusEx(&statex)) { // Get the memory status
+		wchar_t buffer[256]; // Buffer for the memory status
+		swprintf(buffer, 256, L"Memory Load: %ld%%\n", statex.dwMemoryLoad); // Print the memory load
+		SetWindowText(hWND, buffer); // Set the text of the window
 	}
 }
 // The entry point of the program
