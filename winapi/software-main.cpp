@@ -166,4 +166,21 @@ void MainWndAddWidgets(HWND hWnd) {
 		NULL, // Instance
 		NULL // Additional data
 	);
+
+	// Create a textbox
+	CreateWindow(
+		L"EDIT", // Edit class
+		L"Type here", // Default text
+		WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL, // Edit style
+		100, // X position
+		200, // Y position
+		200, // Width
+		100, // Height
+		hWnd, // Parent window
+		NULL, // Menu ID
+		NULL, // Instance
+		NULL // Additional data
+	);
+
+
 }
