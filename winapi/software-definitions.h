@@ -4,13 +4,19 @@
 #define BTN_CLICK_ME 1001  // Button ID
 #define BTN_EXIT     1002  // Button ID
 #define BTN_CLS	  1003  // Button ID
-#define MENU_NEW      2001  // Menu item ID for "New"
-#define MENU_OPEN     2002  // Menu item ID for "Open"
-#define MENU_SAVE     2003  // Menu item ID for "Save"
-#define MENU_EXIT     2004  // Menu item ID for "Exit"
-#define MENU_CUT      3001  // Menu item ID for "Cut"
-#define MENU_COPY     3002  // Menu item ID for "Copy"
-#define MENU_PASTE    3003  // Menu item ID for "Paste
+
+#define MENU_NEW	2001  // Menu item ID for "New"
+#define MENU_OPEN	2002  // Menu item ID for "Open"
+#define MENU_SAVE	2003  // Menu item ID for "Save"
+#define MENU_EXIT	2004  // Menu item ID for "Exit"
+#define MENU_CUT	2005  // Menu item ID for "Cut"
+#define MENU_COPY	2006  // Menu item ID for "Copy"
+#define MENU_PASTE	2007  // Menu item ID for "Paste
+#define MENU_HELP	2008  // Menu item ID for "Help"
+#define MENU_ABOUT	2009  // Menu item ID for "About"
+#define MENU_PRJCT	2010  // Menu item ID for "Project"
+#define MENU_FILE	2011  // Menu item ID for "File"  
+#define MENU_REPO	2012  // Menu item ID for "Repository"
 
 
 HWND hEditControl; // Handle to the edit control
