@@ -66,7 +66,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		L"MainWNDClass", // Name of the window class
 		SoftwareMainProcedure // Window procedure of the window
 	);
-	
+
 	// Register the window class
 	// If registration fails, show an error message and return -1
 	if (!RegisterClass(&SoftwareMainClass)) {
@@ -125,30 +125,29 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	switch (uMsg) {
 		case WM_COMMAND:
 			switch (LOWORD(wParam)) {
-				case 1:
+				case MENU_NEW:
 					MessageBox(hWnd, L"New menu item clicked!", L"Menu", MB_OK);
 					break;
-				case 2:
+				case MENU_OPEN:
 					MessageBox(hWnd, L"Open menu item clicked!", L"Menu", MB_OK);
 					break;
-				case 3:
+				case MENU_SAVE:
 					MessageBox(hWnd, L"Save menu item clicked!", L"Menu", MB_OK);
 					break;
-				case 4:
+				case MENU_EXIT:
 					DestroyWindow(hWnd);
 					break;
-				case 5:
+				case MENU_CUT:
 					MessageBox(hWnd, L"Cut menu item clicked!", L"Menu", MB_OK);
 					break;
-				case 6:
+				case MENU_COPY:
 					MessageBox(hWnd, L"Copy menu item clicked!", L"Menu", MB_OK);
 					break;
-				case 7:
+				case MENU_PASTE:
 					MessageBox(hWnd, L"Paste menu item clicked!", L"Menu", MB_OK);
 					break;
 				case BTN_CLS:
-					// Clear textbox
-					SetWindowsTextA()
+					SetWindowText(hEditControl, L"");
 					break;
 			}
 			break;
@@ -172,29 +171,30 @@ void MainWndAddMenus(HWND hWnd) {
 	HMENU hFileMenu = CreateMenu(); // Add a "File" menu
 	HMENU hNewMenu = CreateMenu();
 
-	AppendMenu(hNewMenu, MF_STRING, 1, L"Project");
-	AppendMenu(hNewMenu, MF_STRING, 1, L"File");
-	AppendMenu(hNewMenu, MF_STRING, 1, L"Repository");
+	AppendMenu(hNewMenu, MF_STRING, NULL, L"Project");
+	AppendMenu(hNewMenu, MF_STRING, NULL, L"File");
+	AppendMenu(hNewMenu, MF_STRING, NULL, L"Repository");
 
 	// hFileMenu is the handle to the "File" menu
 	// MF_STRING is the menu item type
 	// 1 is the ID of the menu item
 	// L"New" is the text of the menu item
 	AppendMenu(hFileMenu, MF_POPUP, (UINT_PTR)hNewMenu, L"New");
-	AppendMenu(hFileMenu, MF_STRING, 2, L"Open");
-	AppendMenu(hFileMenu, MF_STRING, 3, L"Save");
+
+	AppendMenu(hFileMenu, MF_STRING, 2002, L"Open");
+	AppendMenu(hFileMenu, MF_STRING, 2003, L"Save");
 	AppendMenu(hFileMenu, MF_SEPARATOR, NULL, NULL);
-	AppendMenu(hFileMenu, MF_STRING, 4, L"Exit");
-	
+	AppendMenu(hFileMenu, MF_STRING, 2004, L"Exit");
+
 	// Add the "File" menu to the main menu
 	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, L"File");
-	
+
 	// Add an "Edit" menu
 	HMENU hEditMenu = CreateMenu();
-	AppendMenu(hEditMenu, MF_STRING, 5, L"Cut");
-	AppendMenu(hEditMenu, MF_STRING, 6, L"Copy");
-	AppendMenu(hEditMenu, MF_STRING, 7, L"Paste");
-	
+	AppendMenu(hEditMenu, MF_STRING, 2005, L"Cut");
+	AppendMenu(hEditMenu, MF_STRING, 2006, L"Copy");
+	AppendMenu(hEditMenu, MF_STRING, 2007, L"Paste");
+
 	// Add the "Edit" menu to the main menu
 	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hEditMenu, L"Edit");
 
@@ -203,17 +203,25 @@ void MainWndAddMenus(HWND hWnd) {
 }
 
 void MainWndAddWidgets(HWND hWnd) {
-	// Create a button
+	int windowWidth = 500;
+	int windowHeight = 500;
+
+	int elementWidth = 300;
+	int elementHeight = 30;
+
+	int centerX = (windowWidth - elementWidth) / 2;
+	
+	// Create a label "Hello, World!"
 	CreateWindow(
-		L"BUTTON", // Button class
-		L"Click Me", // Button text
-		WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, // Button style
-		5, // X position
-		5, // Y position
-		490, // Width
-		20, // Height
+		L"STATIC", // Static class
+		L"Enter Text Below:", // Label text
+		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
+		centerX, // X position
+		100, // Y position
+		elementWidth, // Width
+		25, // Height
 		hWnd, // Parent window
-		(HMENU)1001, // Menu ID
+		NULL, // Menu ID
 		NULL, // Instance
 		NULL // Additional data
 	);
@@ -221,30 +229,34 @@ void MainWndAddWidgets(HWND hWnd) {
 	// Create a textbox
 	hEditControl = CreateWindow(
 		L"EDIT", // Edit class
-		L"Type here", // Default text
+		L"", // Default text
 		WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL, // Edit style
-		100, // X position
-		200, // Y position
-		200, // Width
-		100, // Height
+		centerX, // X position
+		140, // Y position
+		elementWidth, // Width
+		elementHeight, // Height
 		hWnd, // Parent window
 		NULL, // Menu ID
 		NULL, // Instance
 		NULL // Additional data
 	);
 
-	// Create a label "Hello, World!"
+	// Create a button
 	CreateWindow(
-		L"STATIC", // Static class
-		L"Hello, World!", // Label text
-		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
-		5, // X position
-		30, // Y position
-		100, // Width
-		20, // Height
+		L"BUTTON", // Button class
+		L"Submit", // Button text
+		WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, // Button style
+		centerX, // X position
+		190, // Y position
+		elementWidth, // Width
+		elementHeight, // Height
 		hWnd, // Parent window
-		NULL, // Menu ID
+		(HMENU)1003, // Menu ID
 		NULL, // Instance
 		NULL // Additional data
 	);
+
+	
+
+	
 }
