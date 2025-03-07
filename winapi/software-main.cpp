@@ -146,6 +146,10 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 				case 7:
 					MessageBox(hWnd, L"Paste menu item clicked!", L"Menu", MB_OK);
 					break;
+				case BTN_CLS:
+					// Clear textbox
+					SetWindowsTextA()
+					break;
 			}
 			break;
 		case WM_CLOSE:
@@ -165,11 +169,9 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
 void MainWndAddMenus(HWND hWnd) {
 	HMENU hMenu = CreateMenu(); // Create a new menu
-	
-	// Add a "File" menu
-	HMENU hFileMenu = CreateMenu();
-	
+	HMENU hFileMenu = CreateMenu(); // Add a "File" menu
 	HMENU hNewMenu = CreateMenu();
+
 	AppendMenu(hNewMenu, MF_STRING, 1, L"Project");
 	AppendMenu(hNewMenu, MF_STRING, 1, L"File");
 	AppendMenu(hNewMenu, MF_STRING, 1, L"Repository");
@@ -206,10 +208,10 @@ void MainWndAddWidgets(HWND hWnd) {
 		L"BUTTON", // Button class
 		L"Click Me", // Button text
 		WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, // Button style
-		100, // X position
-		100, // Y position
-		100, // Width
-		50, // Height
+		5, // X position
+		5, // Y position
+		490, // Width
+		20, // Height
 		hWnd, // Parent window
 		(HMENU)1001, // Menu ID
 		NULL, // Instance
@@ -217,7 +219,7 @@ void MainWndAddWidgets(HWND hWnd) {
 	);
 
 	// Create a textbox
-	CreateWindow(
+	hEditControl = CreateWindow(
 		L"EDIT", // Edit class
 		L"Type here", // Default text
 		WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL, // Edit style
@@ -231,5 +233,18 @@ void MainWndAddWidgets(HWND hWnd) {
 		NULL // Additional data
 	);
 
-
+	// Create a label "Hello, World!"
+	CreateWindow(
+		L"STATIC", // Static class
+		L"Hello, World!", // Label text
+		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
+		5, // X position
+		30, // Y position
+		100, // Width
+		20, // Height
+		hWnd, // Parent window
+		NULL, // Menu ID
+		NULL, // Instance
+		NULL // Additional data
+	);
 }
