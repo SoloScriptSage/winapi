@@ -71,6 +71,6 @@ void GetNetworkUsage(); //	Function to get the network usage
 void SaveData(LPCSTR path);
 void LoadData(LPCSTR path);
 void SetOpenFileParameters(HWND hWND);
-DWORD WINAPI UpdateStats(LPVOID lpParam); // Function to update the system stats
+void UpdateStats();
 
 #endif // SOFTWARE_DEFINITIONS_H
