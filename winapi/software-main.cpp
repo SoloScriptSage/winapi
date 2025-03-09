@@ -5,10 +5,12 @@
 #include <thread> // Include the thread header file (for threading)
 #include "resource.h"
 #include "software-definitions.h" // Include the software definitions header file
-
+#include <string> // Include the string header file
 #pragma comment(lib, "iphlpapi.lib") // Link the iphlpapi library
 
 HWND hCPU, hRAM, hNetwork; // Handles to the CPU, RAM, and Network labels
+
+using namespace std;
 
 // CPU Calculation
 ULONGLONG FileTimeToInt64(const FILETIME& ft) {
@@ -147,6 +149,16 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 				case MENU_PASTE:
 					MessageBox(hWnd, L"Paste menu item clicked!", L"Menu", MB_OK);
 					break;
+				case BTN_READ:
+					// Read Strings with Buffer
+					// readChars = GetWindowTextA(hEditControl, Buffer, TEXT_BUFFER_SIZE); // Get the text from the edit control
+					// SetWindowTextA(hStaticControl, Buffer); // Set the text of the static control
+					// SetWindowTextA(hStaticControl, ("Symbols read: " + to_string(readChars)).c_str()); // Set the text of the static control
+					
+					num = GetDlgItemInt(hWnd, DIGIT_INDEX_NUMBER, NULL, FALSE);
+					SetWindowTextA(hStaticControl, ("Number read: " + to_string(num)).c_str());
+
+					break;
 				case BTN_CLS:
 					SetWindowText(hEditControl, L"");
 					break;
@@ -205,50 +217,73 @@ void MainWndAddMenus(HWND hWnd) {
 
 void MainWndAddWidgets(HWND hWnd) {
 	int windowWidth = 500;
-	int windowHeight = 500;
+	int windowHeight = 600; // Adjusted for better spacing
 
+	int menuHeight = 30; // Approximate height of the menu
+	int labelHeight = 25;
+	int labelY = menuHeight + 10; // Position label below menu with some padding
+
+	int textBoxHeight = 200; // Adjusted height
 	int elementWidth = 300;
 	int elementHeight = 30;
 
 	int centerX = (windowWidth - elementWidth) / 2;
-	
-	// Create a label "Hello, World!"
-	CreateWindow(
+
+	// Create a label below the menu
+	hStaticControl = CreateWindow(
 		L"STATIC", // Static class
 		L"Enter Text Below:", // Label text
 		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
 		centerX, // X position
-		100, // Y position
+		labelY, // Y position (below the menu)
 		elementWidth, // Width
-		25, // Height
+		labelHeight, // Height
 		hWnd, // Parent window
 		NULL, // Menu ID
 		NULL, // Instance
 		NULL // Additional data
 	);
 
-	// Create a textbox
+	// Create a textbox below the label
+	int textBoxY = labelY + labelHeight + 10; // Positioning textbox below the label
 	hEditControl = CreateWindow(
 		L"EDIT", // Edit class
 		L"Default Text", // Default text
 		WS_VISIBLE | WS_CHILD | ES_MULTILINE | WS_VSCROLL, // Edit style
 		centerX, // X position
-		140, // Y position
+		textBoxY, // Y position
 		elementWidth, // Width
-		elementHeight, // Height
+		textBoxHeight, // Height
 		hWnd, // Parent window
 		NULL, // Menu ID
 		NULL, // Instance
 		NULL // Additional data
 	);
 
-	// Create a button
+	// Create a number input box below the text box
+	int numberBoxY = textBoxY + textBoxHeight + 10;
+	hNumberControl = CreateWindow(
+		L"EDIT", // Edit class
+		L"0", // Default text
+		WS_VISIBLE | WS_CHILD | ES_CENTER | ES_NUMBER, // Edit style
+		centerX, // X position
+		numberBoxY, // Y position
+		elementWidth, // Width
+		elementHeight, // Height
+		hWnd, // Parent window
+		(HMENU)DIGIT_INDEX_NUMBER, // Menu ID
+		NULL, // Instance
+		NULL // Additional data
+	);
+
+	// Create a button below the number input box
+	int buttonY = numberBoxY + elementHeight + 10; // **Fix: Positioning below number input**
 	CreateWindow(
 		L"BUTTON", // Button class
-		L"Submit", // Button text
+		L"Clear", // Button text
 		WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, // Button style
 		centerX, // X position
-		190, // Y position
+		buttonY, // Y position
 		elementWidth, // Width
 		elementHeight, // Height
 		hWnd, // Parent window
@@ -257,7 +292,20 @@ void MainWndAddWidgets(HWND hWnd) {
 		NULL // Additional data
 	);
 
-	
-
-	
+	// Create Read button below Clear button
+	CreateWindow(
+		L"BUTTON", // Button class
+		L"Read", // Button text
+		WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, // Button style
+		centerX, // X position
+		buttonY + elementHeight + 10, // **Fix: Positioning below Clear button**
+		elementWidth, // Width
+		elementHeight, // Height
+		hWnd, // Parent window
+		(HMENU)1004, // Menu ID
+		NULL, // Instance
+		NULL // Additional data
+	);
 }
+
+
