@@ -26,6 +26,8 @@
 #define MENU_FILE	2011  // Menu item ID for "File"  
 #define MENU_REPO	2012  // Menu item ID for "Repository"
 
+#define MAX_PATH 260
+
 char Buffer[TEXT_BUFFER_SIZE];
 int readChars;
 
@@ -34,6 +36,10 @@ unsigned num = 0;
 HWND hNumberControl;
 HWND hStaticControl;
 HWND hEditControl; // Handle to the edit control
+
+
+char filename[MAX_PATH]; // File name
+OPENFILENAMEA ofn; // Open file dialog structure
 
 // Window procedure. The function is used to process messages sent to the window (like button clicks, key presses, etc.)
 // HWND hWnd: The handle to the window
@@ -64,6 +70,7 @@ void GetDiskUsage(); // Function to get the disk usage
 void GetNetworkUsage(); //	Function to get the network usage
 void SaveData(LPCSTR path);
 void LoadData(LPCSTR path);
+void SetOpenFileParameters(HWND hWND);
 DWORD WINAPI UpdateStats(LPVOID lpParam); // Function to update the system stats
 
 #endif // SOFTWARE_DEFINITIONS_H
