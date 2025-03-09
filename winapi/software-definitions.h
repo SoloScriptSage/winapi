@@ -1,9 +1,16 @@
 #ifndef SOFTWARE_DEFINITIONS_H
 #define SOFTWARE_DEFINITIONS_H
 
+#define SAVE_FILE 1
+#define LOAD_FILE 2
+
+#define TEXT_BUFFER_SIZE	10
+#define DIGIT_INDEX_NUMBER 200
+
 #define BTN_CLICK_ME 1001  // Button ID
 #define BTN_EXIT     1002  // Button ID
 #define BTN_CLS	  1003  // Button ID
+#define BTN_READ	1004
 
 #define MENU_NEW	2001  // Menu item ID for "New"
 #define MENU_OPEN	2002  // Menu item ID for "Open"
@@ -18,7 +25,13 @@
 #define MENU_FILE	2011  // Menu item ID for "File"  
 #define MENU_REPO	2012  // Menu item ID for "Repository"
 
+char Buffer[TEXT_BUFFER_SIZE];
+int readChars;
 
+unsigned num = 0;
+
+HWND hNumberControl;
+HWND hStaticControl;
 HWND hEditControl; // Handle to the edit control
 
 // Window procedure. The function is used to process messages sent to the window (like button clicks, key presses, etc.)

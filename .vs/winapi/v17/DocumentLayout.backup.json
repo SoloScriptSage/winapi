@@ -9,10 +9,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|D:\\Projects\\winapi\\winapi\\software-definitions.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|solutionrelative:winapi\\software-definitions.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|D:\\Projects\\winapi\\winapi\\resource.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|solutionrelative:winapi\\resource.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -32,7 +28,7 @@
               "RelativeDocumentMoniker": "winapi\\software-main.cpp",
               "ToolTip": "D:\\Projects\\winapi\\winapi\\software-main.cpp",
               "RelativeToolTip": "winapi\\software-main.cpp",
-              "ViewState": "AgIAAEMAAAAAAAAAAAAkwFIAAAAKAAAAAAAAAA==",
+              "ViewState": "AgIAAN0AAAAAAAAAAAAAAOgAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-03-04T23:56:52.863Z",
               "IsPinned": true,
@@ -44,26 +40,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "resource.h",
-              "DocumentMoniker": "D:\\Projects\\winapi\\winapi\\resource.h",
-              "RelativeDocumentMoniker": "winapi\\resource.h",
-              "ToolTip": "D:\\Projects\\winapi\\winapi\\resource.h",
-              "RelativeToolTip": "winapi\\resource.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-03-09T16:34:39.206Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 1,
               "Title": "software-definitions.h",
               "DocumentMoniker": "D:\\Projects\\winapi\\winapi\\software-definitions.h",
               "RelativeDocumentMoniker": "winapi\\software-definitions.h",
               "ToolTip": "D:\\Projects\\winapi\\winapi\\software-definitions.h",
               "RelativeToolTip": "winapi\\software-definitions.h",
-              "ViewState": "AgIAABcAAAAAAAAAAAAIwDQAAAAgAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-03-05T00:53:19.496Z",
               "EditorCaption": ""
