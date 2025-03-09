@@ -4,7 +4,7 @@
 #define SAVE_FILE 1
 #define LOAD_FILE 2
 
-#define TEXT_BUFFER_SIZE	10
+#define TEXT_BUFFER_SIZE	256
 #define DIGIT_INDEX_NUMBER 200
 
 #define BTN_CLICK_ME 1001  // Button ID
@@ -15,6 +15,7 @@
 #define MENU_NEW	2001  // Menu item ID for "New"
 #define MENU_OPEN	2002  // Menu item ID for "Open"
 #define MENU_SAVE	2003  // Menu item ID for "Save"
+
 #define MENU_EXIT	2004  // Menu item ID for "Exit"
 #define MENU_CUT	2005  // Menu item ID for "Cut"
 #define MENU_COPY	2006  // Menu item ID for "Copy"
@@ -61,6 +62,8 @@ double GetCPUUsage(); // Function to get the CPU usage
 void GetMemoryUsage(); // Function to get the memory usage
 void GetDiskUsage(); // Function to get the disk usage
 void GetNetworkUsage(); //	Function to get the network usage
+void SaveData(LPCSTR path);
+void LoadData(LPCSTR path);
 DWORD WINAPI UpdateStats(LPVOID lpParam); // Function to update the system stats
 
 #endif // SOFTWARE_DEFINITIONS_H
