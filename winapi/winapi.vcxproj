@@ -130,7 +130,14 @@
     <ClCompile Include="software-main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="software-definitions.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="winapi.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="C:\Users\wladek\Downloads\Papirus-Team-Papirus-Apps-Emerald-theme-manager-icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
