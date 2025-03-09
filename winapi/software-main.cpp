@@ -8,10 +8,15 @@
 #include <string> // Include the string header file
 #pragma comment(lib, "iphlpapi.lib") // Link the iphlpapi library
 
+#define WM_START_THREADS (WM_USER + 1)
+
 using namespace std;
 
 HWND hCPU, hRAM, hNetwork; // Handles to the CPU, RAM, and Network labels
 atomic<bool> updateFlag = true; // Flag to control the update loop
+
+thread cpuThread;
+thread ramThread;
 
 // CPU Calculation
 ULONGLONG FileTimeToInt64(const FILETIME& ft) {
@@ -20,28 +25,36 @@ ULONGLONG FileTimeToInt64(const FILETIME& ft) {
 
 // Get the CPU usage
 double GetCPUUsage() {
-	static ULONGLONG prevIdle = 0, prevKernel = 0, prevUser = 0; // Previous idle, kernel, and user times
-	FILETIME idleTime, kernelTime, userTime; // Idle, kernel, and user times
+	static ULONGLONG prevIdleTime = 0, prevKernelTime = 0, prevUserTime = 0;
+	FILETIME idleTime, kernelTime, userTime;
 
-	if (!GetSystemTimes(&idleTime, &kernelTime, &userTime)) // Get the system times
-		return -1;
+	if (!GetSystemTimes(&idleTime, &kernelTime, &userTime)) {
+		return -1; // Failed to retrieve times
+	}
 
-	ULONGLONG idle = FileTimeToInt64(idleTime);  // Idle time
-	ULONGLONG kernel = FileTimeToInt64(kernelTime); // Kernel time
-	ULONGLONG user = FileTimeToInt64(userTime);		// User time
+	ULONGLONG idle = FileTimeToInt64(idleTime);
+	ULONGLONG kernel = FileTimeToInt64(kernelTime);
+	ULONGLONG user = FileTimeToInt64(userTime);
 
-	ULONGLONG idleDiff = idle - prevIdle; // Idle difference
-	ULONGLONG kernelDiff = kernel - prevKernel; // Kernel difference
-	ULONGLONG userDiff = user - prevUser; // User difference 
+	if (prevIdleTime == 0) { // First call, store initial values
+		prevIdleTime = idle;
+		prevKernelTime = kernel;
+		prevUserTime = user;
+		return 0.0;
+	}
 
-	prevIdle = idle; // Set the previous idle time
-	prevKernel = kernel; // Set the previous kernel time
-	prevUser = user; // Set the previous user time
+	ULONGLONG idleDiff = idle - prevIdleTime;
+	ULONGLONG kernelDiff = kernel - prevKernelTime;
+	ULONGLONG userDiff = user - prevUserTime;
 
-	if ((kernelDiff + userDiff) == 0) // If the kernel and user difference is 0, return 0
-		return 0;
+	prevIdleTime = idle;
+	prevKernelTime = kernel;
+	prevUserTime = user;
 
-	return 100 * (1.0 - (static_cast<double>(idleDiff) / (kernelDiff + userDiff))); // Return the CPU usage
+	ULONGLONG totalTime = kernelDiff + userDiff;
+	if (totalTime == 0) return 0.0;
+
+	return 100.0 * (1.0 - (static_cast<double>(idleDiff) / totalTime));
 }
 
 
@@ -59,14 +72,13 @@ void GetMemoryUsage(HWND hWND) {
 // Thread function for updating CPU usage
 void UpdateCPUUsage() {
 	while (updateFlag) {
-		double cpuUsage = GetCPUUsage(); // Get the CPU usage
+		double cpuUsage = GetCPUUsage();
 		if (hCPU) {
-			wchar_t buffer[256]; // Buffer for the CPU usage
-			swprintf(buffer, 256, L"CPU Usage: %.2f%%\n", cpuUsage); // Print the CPU usage
-			PostMessage(hCPU, WM_SETTEXT, 0, (LPARAM)buffer); // Set the text of the window
+			wchar_t buffer[256];
+			swprintf(buffer, 256, L"CPU Usage: %.2f%%", cpuUsage);
+			PostMessage(hCPU, WM_SETTEXT, 0, (LPARAM)buffer);
 		}
-		
-		this_thread::sleep_for(chrono::seconds(1)); // Sleep for 1 second
+		this_thread::sleep_for(chrono::seconds(1)); // Update every second
 	}
 }
 
@@ -102,6 +114,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return -1;
 	}
 
+	
 	MSG SoftwareMainMessage = { 0 }; // Message structure for the main window
 
 	// Create the main window
@@ -199,8 +212,21 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			MainWndAddMenus(hWnd);
 			MainWndAddWidgets(hWnd);
 			SetOpenFileParameters(hWnd);
+
+			// Post a message to start the threads after the widgets are added
+			PostMessage(hWnd, WM_START_THREADS, 0, 0);
+			break;
+		case WM_START_THREADS:
+			// Start the threads after widgets are added
+			cpuThread = thread(UpdateCPUUsage); // Create and start the thread for CPU usage
+			ramThread = thread(UpdateMemoryUsage); // Create and start the thread for memory usage
 			break;
 		case WM_DESTROY:
+			if (cpuThread.joinable())
+				cpuThread.join();
+			if (ramThread.joinable())
+				ramThread.join();
+
 			PostQuitMessage(0);
 			break;
 		default:
@@ -336,6 +362,34 @@ void MainWndAddWidgets(HWND hWnd) {
 		NULL, // Instance
 		NULL // Additional data
 	);
+
+	hCPU = CreateWindow(
+		L"STATIC", // Static class
+		L"CPU Usage: 0%", // Label text
+		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
+		centerX, // X position
+		buttonY + elementHeight + 50, // Y position
+		elementWidth, // Width
+		labelHeight, // Height
+		hWnd, // Parent window
+		NULL, // Menu ID
+		NULL, // Instance
+		NULL // Additional data
+	);
+
+	hRAM = CreateWindow(
+		L"STATIC", // Static class
+		L"Memory Load: 0%", // Label text
+		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
+		centerX, // X position
+		buttonY + elementHeight + 80, // Y position
+		elementWidth, // Width
+		labelHeight, // Height
+		hWnd, // Parent window
+		NULL, // Menu ID
+		NULL, // Instance
+		NULL // Additional data
+	);
 }
 
 void SaveData(LPCSTR path) {
@@ -396,4 +450,26 @@ void SetOpenFileParameters(HWND hWND) {
 	ofn.nMaxFileTitle = 0;
 	ofn.lpstrInitialDir = "D:\\Projects\\winapi";
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+}
+
+void UpdateStats() {
+	while (true) {
+		double cpuUsage = GetCPUUsage(); // Get the CPU usage
+
+		MEMORYSTATUS statex; // Memory status
+		statex.dwLength = sizeof(statex); // Set the length of the memory status
+		
+		wchar_t cpuBuffer[256]; // Buffer for the CPU usage
+		wchar_t ramBuffer[256]; // Buffer for the RAM usage
+
+		swprintf(cpuBuffer, 256, L"CPU Usage: %.2f%%\n", cpuUsage); // Print the CPU usage
+		swprintf(ramBuffer, 256, L"Memory Load: %ld%%\n", statex.dwMemoryLoad); // Print the memory load
+
+		// Update the UI in the main thread
+
+		SetWindowText(hCPU, cpuBuffer); // Set the text of the CPU window
+		SetWindowText(hRAM, ramBuffer); // Set the text of the RAM window
+
+		Sleep(1000); // Sleep for 1 second
+	}
 }
