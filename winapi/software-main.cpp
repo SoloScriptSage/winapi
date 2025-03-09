@@ -3,6 +3,7 @@
 #include <iphlpapi.h> // IP Helper API header file (for network information)
 #include <iostream> // Include the iostream header file (for console input/output)
 #include <thread> // Include the thread header file (for threading)
+#include "resource.h"
 #include "software-definitions.h" // Include the software definitions header file
 
 #pragma comment(lib, "iphlpapi.lib") // Link the iphlpapi library
@@ -62,7 +63,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		(HBRUSH)COLOR_WINDOW, // Background color of the window
 		LoadCursor(NULL, IDC_ARROW), // Cursor of the window
 		hInstance, // Instance of the window
-		LoadIcon(NULL, IDI_QUESTION), // Icon of the window
+		LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1)), // Icon of the window
 		L"MainWNDClass", // Name of the window class
 		SoftwareMainProcedure // Window procedure of the window
 	);
@@ -79,7 +80,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// Create the main window
 	CreateWindow(
 		L"MainWNDClass", // Window class name
-		L"Software Main", // Window title
+		L"WinApi", // Window title
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE, // Window style
 		CW_USEDEFAULT, // X position
 		CW_USEDEFAULT, // Y position
@@ -149,8 +150,7 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 				case BTN_CLS:
 					SetWindowText(hEditControl, L"");
 					break;
-			}
-			break;
+			}break;
 		case WM_CLOSE:
 			DestroyWindow(hWnd);
 			break;
@@ -168,13 +168,10 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
 void MainWndAddMenus(HWND hWnd) {
 	HMENU hMenu = CreateMenu(); // Create a new menu
+	
 	HMENU hFileMenu = CreateMenu(); // Add a "File" menu
 	HMENU hNewMenu = CreateMenu();
-
-	AppendMenu(hNewMenu, MF_STRING, NULL, L"Project");
-	AppendMenu(hNewMenu, MF_STRING, NULL, L"File");
-	AppendMenu(hNewMenu, MF_STRING, NULL, L"Repository");
-
+	
 	// hFileMenu is the handle to the "File" menu
 	// MF_STRING is the menu item type
 	// 1 is the ID of the menu item
@@ -188,6 +185,10 @@ void MainWndAddMenus(HWND hWnd) {
 
 	// Add the "File" menu to the main menu
 	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, L"File");
+
+	AppendMenu(hNewMenu, MF_STRING, NULL, L"Project");
+	AppendMenu(hNewMenu, MF_STRING, NULL, L"File");
+	AppendMenu(hNewMenu, MF_STRING, NULL, L"Repository");
 
 	// Add an "Edit" menu
 	HMENU hEditMenu = CreateMenu();
@@ -229,8 +230,8 @@ void MainWndAddWidgets(HWND hWnd) {
 	// Create a textbox
 	hEditControl = CreateWindow(
 		L"EDIT", // Edit class
-		L"", // Default text
-		WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL, // Edit style
+		L"Default Text", // Default text
+		WS_VISIBLE | WS_CHILD | ES_MULTILINE | WS_VSCROLL, // Edit style
 		centerX, // X position
 		140, // Y position
 		elementWidth, // Width
