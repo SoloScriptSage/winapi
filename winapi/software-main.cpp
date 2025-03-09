@@ -8,9 +8,10 @@
 #include <string> // Include the string header file
 #pragma comment(lib, "iphlpapi.lib") // Link the iphlpapi library
 
-HWND hCPU, hRAM, hNetwork; // Handles to the CPU, RAM, and Network labels
-
 using namespace std;
+
+HWND hCPU, hRAM, hNetwork; // Handles to the CPU, RAM, and Network labels
+atomic<bool> updateFlag = true; // Flag to control the update loop
 
 // CPU Calculation
 ULONGLONG FileTimeToInt64(const FILETIME& ft) {
@@ -43,6 +44,7 @@ double GetCPUUsage() {
 	return 100 * (1.0 - (static_cast<double>(idleDiff) / (kernelDiff + userDiff))); // Return the CPU usage
 }
 
+
 void GetMemoryUsage(HWND hWND) {
 	MEMORYSTATUSEX statex; // Memory status
 	statex.dwLength = sizeof(statex); // Set the length of the memory status
@@ -53,6 +55,29 @@ void GetMemoryUsage(HWND hWND) {
 		SetWindowText(hWND, buffer); // Set the text of the window
 	}
 }
+
+// Thread function for updating CPU usage
+void UpdateCPUUsage() {
+	while (updateFlag) {
+		double cpuUsage = GetCPUUsage(); // Get the CPU usage
+		if (hCPU) {
+			wchar_t buffer[256]; // Buffer for the CPU usage
+			swprintf(buffer, 256, L"CPU Usage: %.2f%%\n", cpuUsage); // Print the CPU usage
+			PostMessage(hCPU, WM_SETTEXT, 0, (LPARAM)buffer); // Set the text of the window
+		}
+		
+		this_thread::sleep_for(chrono::seconds(1)); // Sleep for 1 second
+	}
+}
+
+// Thread function for updating memory usage
+void UpdateMemoryUsage() {
+	while (updateFlag) {
+		GetMemoryUsage(hRAM); // Get the memory usage
+		this_thread::sleep_for(chrono::seconds(1)); // Sleep for 1 second
+	}
+}
+
 // The entry point of the program
 // HINSTANCE hInstance: The instance of the program
 // HINSTANCE hPrevInstance: The previous instance of the program
@@ -132,10 +157,15 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 					MessageBox(hWnd, L"New menu item clicked!", L"Menu", MB_OK);
 					break;
 				case MENU_OPEN:
-					LoadData("D:\\Projects\\winapi\\output.txt");
-					break;
+					/*LoadData("D:\\Projects\\winapi\\output.txt");*/
+					if (GetOpenFileNameA(&ofn)) {
+						LoadData(ofn.lpstrFile);
+					}break;
 				case MENU_SAVE:
-					SaveData("D:\\Projects\\winapi\\output.txt");
+					if (GetSaveFileNameA(&ofn)) {
+						SaveData(ofn.lpstrFile);
+					}
+					/*SaveData("D:\\Projects\\winapi\\output.txt");*/
 					break;
 				case MENU_EXIT:
 					DestroyWindow(hWnd);
@@ -168,6 +198,7 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		case WM_CREATE:
 			MainWndAddMenus(hWnd);
 			MainWndAddWidgets(hWnd);
+			SetOpenFileParameters(hWnd);
 			break;
 		case WM_DESTROY:
 			PostQuitMessage(0);
@@ -307,7 +338,6 @@ void MainWndAddWidgets(HWND hWnd) {
 	);
 }
 
-
 void SaveData(LPCSTR path) {
 	HANDLE FileToSave = CreateFileA(
 		path, 
@@ -352,4 +382,18 @@ void LoadData(LPCSTR path) {
 
 	SetWindowTextA(hEditControl, Buffer); // Set the text of the edit control
 	CloseHandle(FileToLoad); // Close the file
+}
+
+void SetOpenFileParameters(HWND hWND) {
+	ZeroMemory(&ofn, sizeof(ofn)); // Clear the memory of the open file dialog
+
+	ofn.lStructSize = sizeof(ofn); // Set the size of the structure
+	ofn.hwndOwner = hWND; // Set the owner of the dialog
+	ofn.lpstrFile = filename; // Set the file name
+	ofn.nMaxFile = sizeof(filename); // Set the maximum file size
+	ofn.lpstrFilter = "*.txt";
+	ofn.lpstrFileTitle = NULL;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = "D:\\Projects\\winapi";
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 }
