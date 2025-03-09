@@ -132,10 +132,10 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 					MessageBox(hWnd, L"New menu item clicked!", L"Menu", MB_OK);
 					break;
 				case MENU_OPEN:
-					MessageBox(hWnd, L"Open menu item clicked!", L"Menu", MB_OK);
+					LoadData("D:\\Projects\\winapi\\output.txt");
 					break;
 				case MENU_SAVE:
-					MessageBox(hWnd, L"Save menu item clicked!", L"Menu", MB_OK);
+					SaveData("D:\\Projects\\winapi\\output.txt");
 					break;
 				case MENU_EXIT:
 					DestroyWindow(hWnd);
@@ -154,7 +154,6 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 					// readChars = GetWindowTextA(hEditControl, Buffer, TEXT_BUFFER_SIZE); // Get the text from the edit control
 					// SetWindowTextA(hStaticControl, Buffer); // Set the text of the static control
 					// SetWindowTextA(hStaticControl, ("Symbols read: " + to_string(readChars)).c_str()); // Set the text of the static control
-					
 					num = GetDlgItemInt(hWnd, DIGIT_INDEX_NUMBER, NULL, FALSE);
 					SetWindowTextA(hStaticControl, ("Number read: " + to_string(num)).c_str());
 
@@ -189,7 +188,7 @@ void MainWndAddMenus(HWND hWnd) {
 	// 1 is the ID of the menu item
 	// L"New" is the text of the menu item
 	AppendMenu(hFileMenu, MF_POPUP, (UINT_PTR)hNewMenu, L"New");
-
+	AppendMenu(hFileMenu, MF_SEPARATOR, NULL, NULL);
 	AppendMenu(hFileMenu, MF_STRING, 2002, L"Open");
 	AppendMenu(hFileMenu, MF_STRING, 2003, L"Save");
 	AppendMenu(hFileMenu, MF_SEPARATOR, NULL, NULL);
@@ -309,3 +308,48 @@ void MainWndAddWidgets(HWND hWnd) {
 }
 
 
+void SaveData(LPCSTR path) {
+	HANDLE FileToSave = CreateFileA(
+		path, 
+		GENERIC_WRITE, 
+		0, 
+		NULL, 
+		CREATE_ALWAYS, 
+		FILE_ATTRIBUTE_NORMAL, 
+		NULL
+	); // Create a new file
+
+	int saveLength = GetWindowTextLength(hEditControl); // Get the length of the text in the edit control
+	char* saveBuffer = new char[saveLength + 1]; // Create a buffer to store the text
+
+	saveLength = GetWindowTextA(hEditControl, saveBuffer, saveLength + 1); // Get the text from the edit control
+
+	DWORD bytesIterated; // Bytes written to the file
+	WriteFile(FileToSave, saveBuffer, saveLength, &bytesIterated, NULL); // Write the text to the file
+
+	CloseHandle(FileToSave); // Close the file
+	delete[] saveBuffer; // Delete the buffer
+}
+
+void LoadData(LPCSTR path) {
+	HANDLE FileToLoad = CreateFileA(
+		path,
+		GENERIC_READ,
+		0,
+		NULL,
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL,
+		NULL
+	); // Open the file
+
+	DWORD bytesIterated;
+	ReadFile(
+		FileToLoad, 
+		Buffer, 
+		TEXT_BUFFER_SIZE, 
+		&bytesIterated, 
+		NULL); // Read the file
+
+	SetWindowTextA(hEditControl, Buffer); // Set the text of the edit control
+	CloseHandle(FileToLoad); // Close the file
+}
