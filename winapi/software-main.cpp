@@ -6,6 +6,9 @@
 #include "resource.h"
 #include "software-definitions.h" // Include the software definitions header file
 #include <string> // Include the string header file
+#include <vector>
+
+
 #pragma comment(lib, "iphlpapi.lib") // Link the iphlpapi library
 
 #define WM_START_THREADS (WM_USER + 1)
@@ -18,9 +21,75 @@ atomic<bool> updateFlag = true; // Flag to control the update loop
 thread cpuThread;
 thread ramThread;
 
+typedef struct _SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION {
+	LARGE_INTEGER IdleTime;
+	LARGE_INTEGER KernelTime;
+	LARGE_INTEGER UserTime;
+} SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION;
+
+
+typedef NTSTATUS(WINAPI* pNtQuerySystemInformation)(
+	ULONG SystemInformationClass,
+	PVOID SystemInformation,
+	ULONG SystemInformationLength,
+	PULONG ReturnLength);
+
+#define SystemProcessorPerformanceInformation 8
+
 // CPU Calculation
 ULONGLONG FileTimeToInt64(const FILETIME& ft) {
 	return (((ULONGLONG)ft.dwHighDateTime) << 32) | ((ULONGLONG)ft.dwLowDateTime);
+}
+
+vector<SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION> GetCPUInfo() {
+	static pNtQuerySystemInformation NtQuerySystemInformation =
+		(pNtQuerySystemInformation)GetProcAddress(GetModuleHandle(TEXT("ntdll.dll")), "NtQuerySystemInformation");
+
+	if (!NtQuerySystemInformation) {
+		std::cerr << "Failed to load NtQuerySystemInformation\n";
+		return {};
+	}
+
+	ULONG numProcessors = std::thread::hardware_concurrency();
+	std::vector<SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION> cpuInfo(numProcessors);
+
+	NTSTATUS status = NtQuerySystemInformation(SystemProcessorPerformanceInformation, cpuInfo.data(),
+		numProcessors * sizeof(SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION), nullptr);
+	if (status != 0) { // STATUS_SUCCESS = 0
+		std::cerr << "NtQuerySystemInformation failed\n";
+		return {};
+	}
+
+	return cpuInfo;
+}
+
+void PrintPerCoreCPUUsage() {
+	auto prevCPUInfo = GetCPUInfo();
+	Sleep(1000); // Wait 1 second
+	auto currCPUInfo = GetCPUInfo();
+
+	if (prevCPUInfo.empty() || currCPUInfo.empty()) {
+		std::cerr << "Failed to get CPU information\n";
+		return;
+	}
+
+	ULONG numProcessors = std::thread::hardware_concurrency();
+
+	for (ULONG i = 0; i < numProcessors; i++) {
+		ULONGLONG prevIdle = prevCPUInfo[i].IdleTime.QuadPart;
+		ULONGLONG prevKernel = prevCPUInfo[i].KernelTime.QuadPart;
+		ULONGLONG prevUser = prevCPUInfo[i].UserTime.QuadPart;
+
+		ULONGLONG currIdle = currCPUInfo[i].IdleTime.QuadPart;
+		ULONGLONG currKernel = currCPUInfo[i].KernelTime.QuadPart;
+		ULONGLONG currUser = currCPUInfo[i].UserTime.QuadPart;
+
+		ULONGLONG totalDiff = (currKernel - prevKernel) + (currUser - prevUser);
+		ULONGLONG idleDiff = currIdle - prevIdle;
+
+		double usage = (totalDiff - idleDiff) * 100.0 / totalDiff;
+		std::cout << "CPU Core " << i << ": " << usage << "% usage\n";
+	}
 }
 
 // Get the CPU usage
@@ -52,10 +121,19 @@ double GetCPUUsage() {
 	prevUserTime = user;
 
 	ULONGLONG totalTime = kernelDiff + userDiff;
-	if (totalTime == 0) return 0.0;
+	if (totalTime == 0) {
+		wprintf(L"CPU Time Difference is zero, skipping update\n");
+		return 0.0;  // Avoid division by zero
+	}
 
-	return 100.0 * (1.0 - (static_cast<double>(idleDiff) / totalTime));
+	double cpuUsage = 100.0 * (1.0 - (static_cast<double>(idleDiff) / totalTime));
+
+	// Debugging output
+	wprintf(L"CPU Usage: %.2f%% (IdleDiff: %llu, KernelDiff: %llu, UserDiff: %llu)\n", cpuUsage, idleDiff, kernelDiff, userDiff);
+
+	return cpuUsage;
 }
+
 
 
 void GetMemoryUsage(HWND hWND) {
@@ -72,12 +150,7 @@ void GetMemoryUsage(HWND hWND) {
 // Thread function for updating CPU usage
 void UpdateCPUUsage() {
 	while (updateFlag) {
-		double cpuUsage = GetCPUUsage();
-		if (hCPU) {
-			wchar_t buffer[256];
-			swprintf(buffer, 256, L"CPU Usage: %.2f%%", cpuUsage);
-			PostMessage(hCPU, WM_SETTEXT, 0, (LPARAM)buffer);
-		}
+		PrintPerCoreCPUUsage(); // This now prints per-core CPU usage
 		this_thread::sleep_for(chrono::seconds(1)); // Update every second
 	}
 }
