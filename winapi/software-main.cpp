@@ -354,15 +354,18 @@ void MainWndAddWidgets(HWND hWnd) {
 	// Constants for widget sizes and positions
 	const int labelX = 10;
 	const int labelY = 10; // Position label at the top-left corner
-
-	const int textBoxEditControlY = labelY + 25;
-	const int textBoxNumberControlY = textBoxEditControlY + 25;
-
-	const int menuHeight = 30; // Approximate height of the menu
 	const int labelHeight = 25;
+
 	const int textBoxHeight = 200; // Adjusted height for multiline textbox
+	const int textBoxEditControlY = labelY + 25;
+	const int textBoxNumberControlY = textBoxHeight + 50;
+	
+	const int menuHeight = 30; // Approximate height of the menu	
+	
 	const int elementWidth = 300;
 	const int elementHeight = 30;
+
+	int buttonY = textBoxNumberControlY + elementHeight + 10; // Position below number input
 
 	// Get the window's client area size to calculate centerX and positioning of hCPU/hRAM
 	RECT clientRect;
@@ -374,10 +377,10 @@ void MainWndAddWidgets(HWND hWnd) {
 		L"STATIC",              // Static class
 		L"Enter Text Below:",   // Label text
 		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
-		labelX,                // X position
-		labelY,                // Y position (top-left)
-		elementWidth,          // Width
-		labelHeight,           // Height
+		labelX,                // X position - 10
+		labelY,                // Y position (top-left) - 10
+		elementWidth,          // Width - 300 
+		labelHeight,           // Height - 25
 		hWnd,                  // Parent window
 		NULL,                  // Menu ID
 		NULL,                  // Instance
@@ -389,10 +392,10 @@ void MainWndAddWidgets(HWND hWnd) {
 		L"EDIT",                      // Edit class
 		L"Default Text",               // Default text
 		WS_VISIBLE | WS_CHILD | ES_MULTILINE | WS_VSCROLL, // Edit style
-		labelX,                       // X position
-		textBoxEditControlY,          // Y position (below the label)
-		elementWidth,                 // Width
-		textBoxHeight,                // Height
+		labelX,                       // X position - 10
+		textBoxEditControlY,          // Y position (below the label) - 35
+		elementWidth,                 // Width - 300
+		textBoxHeight,                // Height - 200
 		hWnd,                         // Parent window
 		NULL,                         // Menu ID
 		NULL,                         // Instance
@@ -404,10 +407,10 @@ void MainWndAddWidgets(HWND hWnd) {
 		L"EDIT",               // Edit class
 		L"0",                  // Default text
 		WS_VISIBLE | WS_CHILD | ES_CENTER | ES_NUMBER, // Edit style
-		labelX,               // X position
-		textBoxNumberControlY, // Y position (below the text box)
-		elementWidth,         // Width
-		elementHeight,        // Height
+		labelX,               // X position - 10
+		textBoxNumberControlY, // Y position (below the text box) - 235
+		elementWidth,         // Width - 300
+		elementHeight,        // Height - 30
 		hWnd,                 // Parent window
 		(HMENU)DIGIT_INDEX_NUMBER, // Menu ID
 		NULL,                 // Instance
@@ -415,12 +418,11 @@ void MainWndAddWidgets(HWND hWnd) {
 	);
 
 	// Create "Clear" button (to the right of the textbox)
-	int buttonY = textBoxNumberControlY + elementHeight + 10; // Position below number input
 	CreateWindow(
 		L"BUTTON",              // Button class
 		L"Clear",               // Button text
 		WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, // Button style
-		labelX + elementWidth + 10, // X position (right of the textbox)
+		labelX, // X position (right of the textbox)
 		buttonY,               // Y position
 		elementWidth,          // Width
 		elementHeight,         // Height
@@ -435,7 +437,7 @@ void MainWndAddWidgets(HWND hWnd) {
 		L"BUTTON",              // Button class
 		L"Read",                // Button text
 		WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, // Button style
-		labelX + elementWidth + 10, // X position (next to "Clear" button)
+		labelX, // X position (next to "Clear" button)
 		buttonY + elementHeight + 10, // Y position (below "Clear" button)
 		elementWidth,          // Width
 		elementHeight,         // Height
@@ -453,7 +455,7 @@ void MainWndAddWidgets(HWND hWnd) {
 		labelX + elementWidth + 10, // X position (right of the textbox)
 		buttonY + elementHeight + 50, // Y position (below the buttons)
 		elementWidth,         // Width
-		labelHeight,          // Height
+		labelHeight + 300,          // Height
 		hWnd,                 // Parent window
 		NULL,                 // Menu ID
 		NULL,                 // Instance
@@ -466,7 +468,7 @@ void MainWndAddWidgets(HWND hWnd) {
 		L"Memory Load: 0%",    // Label text
 		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
 		labelX + elementWidth + 10, // X position (right of the textbox)
-		buttonY + elementHeight + 90, // Y position (below CPU label)
+		buttonY + elementHeight + 350, // Y position (below CPU label)
 		elementWidth,         // Width
 		labelHeight,          // Height
 		hWnd,                 // Parent window
