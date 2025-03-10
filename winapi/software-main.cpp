@@ -202,8 +202,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE, // Window style
 		CW_USEDEFAULT, // X position
 		CW_USEDEFAULT, // Y position
-		800, // Width
-		600, // Height
+		600, // Width
+		500, // Height
 		NULL, // Parent window
 		NULL, // Menu
 		hInstance, // Instance
@@ -448,14 +448,15 @@ void MainWndAddWidgets(HWND hWnd) {
 	);
 
 	// Create static label for CPU usage, positioned to the right of the textbox
+	int hCPUHeight = labelHeight + 250;
 	hCPU = CreateWindow(
 		L"STATIC",             // Static class
 		L"CPU Usage: 0%",      // Label text
 		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
 		labelX + elementWidth + 10, // X position (right of the textbox)
-		buttonY + elementHeight + 50, // Y position (below the buttons)
+		textBoxEditControlY, // Y position (below the buttons)
 		elementWidth,         // Width
-		labelHeight + 300,          // Height
+		hCPUHeight,          // Height
 		hWnd,                 // Parent window
 		NULL,                 // Menu ID
 		NULL,                 // Instance
@@ -468,7 +469,7 @@ void MainWndAddWidgets(HWND hWnd) {
 		L"Memory Load: 0%",    // Label text
 		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
 		labelX + elementWidth + 10, // X position (right of the textbox)
-		buttonY + elementHeight + 350, // Y position (below CPU label)
+		textBoxEditControlY + hCPUHeight, // Y position (below CPU label)
 		elementWidth,         // Width
 		labelHeight,          // Height
 		hWnd,                 // Parent window
