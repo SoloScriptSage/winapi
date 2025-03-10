@@ -74,6 +74,7 @@ void PrintPerCoreCPUUsage() {
 	}
 
 	ULONG numProcessors = std::thread::hardware_concurrency();
+	std::wstring usageText = L"";
 
 	for (ULONG i = 0; i < numProcessors; i++) {
 		ULONGLONG prevIdle = prevCPUInfo[i].IdleTime.QuadPart;
@@ -88,7 +89,11 @@ void PrintPerCoreCPUUsage() {
 		ULONGLONG idleDiff = currIdle - prevIdle;
 
 		double usage = (totalDiff - idleDiff) * 100.0 / totalDiff;
-		std::cout << "CPU Core " << i << ": " << usage << "% usage\n";
+		usageText += L"CPU Core " + std::to_wstring(i) + L": " + std::to_wstring(usage) + L"% usage\n";
+	}
+
+	if (hCPU) {
+		SetWindowText(hCPU, usageText.c_str());
 	}
 }
 
@@ -289,6 +294,7 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			// Post a message to start the threads after the widgets are added
 			PostMessage(hWnd, WM_START_THREADS, 0, 0);
 			break;
+
 		case WM_START_THREADS:
 			// Start the threads after widgets are added
 			cpuThread = thread(UpdateCPUUsage); // Create and start the thread for CPU usage
@@ -455,7 +461,7 @@ void MainWndAddWidgets(HWND hWnd) {
 		L"Memory Load: 0%", // Label text
 		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
 		centerX, // X position
-		buttonY + elementHeight + 80, // Y position
+		buttonY + elementHeight + 90, // Y position (moved 40 units down)
 		elementWidth, // Width
 		labelHeight, // Height
 		hWnd, // Parent window
@@ -540,7 +546,6 @@ void UpdateStats() {
 
 		// Update the UI in the main thread
 
-		SetWindowText(hCPU, cpuBuffer); // Set the text of the CPU window
 		SetWindowText(hRAM, ramBuffer); // Set the text of the RAM window
 
 		Sleep(1000); // Sleep for 1 second
