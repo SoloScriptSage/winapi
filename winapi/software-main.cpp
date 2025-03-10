@@ -279,6 +279,12 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 					SetWindowTextA(hStaticControl, ("Number read: " + to_string(num)).c_str());
 
 					break;
+				case BTN_READ_CLR:
+					RGB(GetDlgItemInt(hWnd, DLG_INDEX_COLOR_R, FALSE, FALSE),
+						GetDlgItemInt(hWnd, DLG_INDEX_COLOR_G, FALSE, FALSE),
+						GetDlgItemInt(hWnd, DLG_INDEX_COLOR_B, FALSE, FALSE)
+					);
+					break;
 				case BTN_CLS:
 					SetWindowText(hEditControl, L"");
 					break;
@@ -456,7 +462,82 @@ void MainWndAddWidgets(HWND hWnd) {
 		NULL,                  // Instance
 		NULL                   // Additional data
 	);
+
+	// Create label for G value
+	CreateWindow(
+		L"STATIC",             // Static class
+		L"G:",     // Label text
+		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
+		60,                // X position - 10
+		310, // Y position (below the "Read" button) - 275
+		30,          // Width - 5
+		30,         // Height - 5
+		hWnd,                  // Parent window
+		NULL,                  // Menu ID
+		NULL,                  // Instance
+		NULL                   // Additional data
+	);
 	
+	// Create a textbox to the right of the label R
+	CreateWindow(
+		L"EDIT",               // Edit class
+		L"0",                  // Default text
+		WS_VISIBLE | WS_CHILD | ES_CENTER | ES_NUMBER, // Edit style
+		75,               // X position - 40
+		310, // Y position (below the "Read" button) - 275
+		30,          // Width - 30
+		25,         // Height - 30
+		hWnd,                  // Parent window
+		/*(HMENU)DIGIT_INDEX_R*/NULL, // Menu ID
+		NULL,                  // Instance
+		NULL                   // Additional data
+	);
+
+	// Create label for B value
+	CreateWindow(
+		L"STATIC",             // Static class
+		L"B:",     // Label text
+		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
+		110,                // X position - 10
+		310, // Y position (below the "Read" button) - 275
+		30,          // Width - 5
+		30,         // Height - 5
+		hWnd,                  // Parent window
+		NULL,                  // Menu ID
+		NULL,                  // Instance
+		NULL                   // Additional data
+	);
+
+	// Create a textbox to the right of the label B
+	CreateWindow(
+		L"EDIT",               // Edit class
+		L"0",                  // Default text
+		WS_VISIBLE | WS_CHILD | ES_CENTER | ES_NUMBER, // Edit style
+		125,               // X position - 40
+		310, // Y position (below the "Read" button) - 275
+		30,          // Width - 30
+		25,         // Height - 30
+		hWnd,                  // Parent window
+		/*(HMENU)DIGIT_INDEX_R*/NULL, // Menu ID
+		NULL,                  // Instance
+		NULL                   // Additional data
+	);
+
+	// Create a button on the bottom readcolor
+	CreateWindow(
+		L"BUTTON",              // Button class
+		L"Read Color",          // Button text
+		WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, // Button style
+		10, // X position (right of the textbox)
+		340, // Y position (below the buttons)
+		300,         // Width
+		30,          // Height
+		hWnd,                 // Parent window
+		(HMENU)BTN_READ_CLR,                 // Menu ID
+		NULL,                 // Instance
+		NULL                  // Additional data
+	);
+
 	// Create static label for CPU usage, positioned to the right of the textbox
 
 	hCPU = CreateWindow(

@@ -11,6 +11,7 @@
 #define BTN_EXIT     1002  // Button ID
 #define BTN_CLS	  1003  // Button ID
 #define BTN_READ	1004
+#define BTN_READ_CLR 1005
 
 #define MENU_NEW	2001  // Menu item ID for "New"
 #define MENU_OPEN	2002  // Menu item ID for "Open"
@@ -27,6 +28,10 @@
 #define MENU_REPO	2012  // Menu item ID for "Repository"
 
 #define MAX_PATH 260
+
+#define DLG_INDEX_COLOR_R
+#define DLG_INDEX_COLOR_G
+#define DLG_INDEX_COLOR_B
 
 char Buffer[TEXT_BUFFER_SIZE];
 int readChars;
