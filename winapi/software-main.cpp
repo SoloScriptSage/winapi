@@ -202,8 +202,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE, // Window style
 		CW_USEDEFAULT, // X position
 		CW_USEDEFAULT, // Y position
-		500, // Width
-		500, // Height
+		800, // Width
+		600, // Height
 		NULL, // Parent window
 		NULL, // Menu
 		hInstance, // Instance
@@ -351,125 +351,132 @@ void MainWndAddMenus(HWND hWnd) {
 }
 
 void MainWndAddWidgets(HWND hWnd) {
-	int windowWidth = 500;
-	int windowHeight = 600; // Adjusted for better spacing
+	// Constants for widget sizes and positions
+	const int labelX = 10;
+	const int labelY = 10; // Position label at the top-left corner
 
-	int menuHeight = 30; // Approximate height of the menu
-	int labelHeight = 25;
-	int labelY = menuHeight + 10; // Position label below menu with some padding
+	const int textBoxEditControlY = labelY + 25;
+	const int textBoxNumberControlY = textBoxEditControlY + 25;
 
-	int textBoxHeight = 200; // Adjusted height
-	int elementWidth = 300;
-	int elementHeight = 30;
+	const int menuHeight = 30; // Approximate height of the menu
+	const int labelHeight = 25;
+	const int textBoxHeight = 200; // Adjusted height for multiline textbox
+	const int elementWidth = 300;
+	const int elementHeight = 30;
 
-	int centerX = (windowWidth - elementWidth) / 2;
+	// Get the window's client area size to calculate centerX and positioning of hCPU/hRAM
+	RECT clientRect;
+	GetClientRect(hWnd, &clientRect);
+	int centerX = (clientRect.right - clientRect.left - elementWidth) / 2; // Calculate horizontal center
 
-	// Create a label below the menu
+	// Create label: "Enter Text Below"
 	hStaticControl = CreateWindow(
-		L"STATIC", // Static class
-		L"Enter Text Below:", // Label text
+		L"STATIC",              // Static class
+		L"Enter Text Below:",   // Label text
 		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
-		centerX, // X position
-		labelY, // Y position (below the menu)
-		elementWidth, // Width
-		labelHeight, // Height
-		hWnd, // Parent window
-		NULL, // Menu ID
-		NULL, // Instance
-		NULL // Additional data
+		labelX,                // X position
+		labelY,                // Y position (top-left)
+		elementWidth,          // Width
+		labelHeight,           // Height
+		hWnd,                  // Parent window
+		NULL,                  // Menu ID
+		NULL,                  // Instance
+		NULL                   // Additional data
 	);
 
-	// Create a textbox below the label
-	int textBoxY = labelY + labelHeight + 10; // Positioning textbox below the label
+	// Create multiline text box for user input
 	hEditControl = CreateWindow(
-		L"EDIT", // Edit class
-		L"Default Text", // Default text
+		L"EDIT",                      // Edit class
+		L"Default Text",               // Default text
 		WS_VISIBLE | WS_CHILD | ES_MULTILINE | WS_VSCROLL, // Edit style
-		centerX, // X position
-		textBoxY, // Y position
-		elementWidth, // Width
-		textBoxHeight, // Height
-		hWnd, // Parent window
-		NULL, // Menu ID
-		NULL, // Instance
-		NULL // Additional data
+		labelX,                       // X position
+		textBoxEditControlY,          // Y position (below the label)
+		elementWidth,                 // Width
+		textBoxHeight,                // Height
+		hWnd,                         // Parent window
+		NULL,                         // Menu ID
+		NULL,                         // Instance
+		NULL                          // Additional data
 	);
 
-	// Create a number input box below the text box
-	int numberBoxY = textBoxY + textBoxHeight + 10;
+	// Create number input box (centered text, for numeric input)
 	hNumberControl = CreateWindow(
-		L"EDIT", // Edit class
-		L"0", // Default text
+		L"EDIT",               // Edit class
+		L"0",                  // Default text
 		WS_VISIBLE | WS_CHILD | ES_CENTER | ES_NUMBER, // Edit style
-		centerX, // X position
-		numberBoxY, // Y position
-		elementWidth, // Width
-		elementHeight, // Height
-		hWnd, // Parent window
+		labelX,               // X position
+		textBoxNumberControlY, // Y position (below the text box)
+		elementWidth,         // Width
+		elementHeight,        // Height
+		hWnd,                 // Parent window
 		(HMENU)DIGIT_INDEX_NUMBER, // Menu ID
-		NULL, // Instance
-		NULL // Additional data
+		NULL,                 // Instance
+		NULL                  // Additional data
 	);
 
-	// Create a button below the number input box
-	int buttonY = numberBoxY + elementHeight + 10; // **Fix: Positioning below number input**
+	// Create "Clear" button (to the right of the textbox)
+	int buttonY = textBoxNumberControlY + elementHeight + 10; // Position below number input
 	CreateWindow(
-		L"BUTTON", // Button class
-		L"Clear", // Button text
+		L"BUTTON",              // Button class
+		L"Clear",               // Button text
 		WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, // Button style
-		centerX, // X position
-		buttonY, // Y position
-		elementWidth, // Width
-		elementHeight, // Height
-		hWnd, // Parent window
-		(HMENU)1003, // Menu ID
-		NULL, // Instance
-		NULL // Additional data
+		labelX + elementWidth + 10, // X position (right of the textbox)
+		buttonY,               // Y position
+		elementWidth,          // Width
+		elementHeight,         // Height
+		hWnd,                  // Parent window
+		(HMENU)1003,           // Menu ID
+		NULL,                  // Instance
+		NULL                   // Additional data
 	);
 
-	// Create Read button below Clear button
+	// Create "Read" button (next to "Clear")
 	CreateWindow(
-		L"BUTTON", // Button class
-		L"Read", // Button text
+		L"BUTTON",              // Button class
+		L"Read",                // Button text
 		WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, // Button style
-		centerX, // X position
-		buttonY + elementHeight + 10, // **Fix: Positioning below Clear button**
-		elementWidth, // Width
-		elementHeight, // Height
-		hWnd, // Parent window
-		(HMENU)1004, // Menu ID
-		NULL, // Instance
-		NULL // Additional data
+		labelX + elementWidth + 10, // X position (next to "Clear" button)
+		buttonY + elementHeight + 10, // Y position (below "Clear" button)
+		elementWidth,          // Width
+		elementHeight,         // Height
+		hWnd,                  // Parent window
+		(HMENU)1004,           // Menu ID
+		NULL,                  // Instance
+		NULL                   // Additional data
 	);
 
+	// Create static label for CPU usage, positioned to the right of the textbox
 	hCPU = CreateWindow(
-		L"STATIC", // Static class
-		L"CPU Usage: 0%", // Label text
+		L"STATIC",             // Static class
+		L"CPU Usage: 0%",      // Label text
 		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
-		centerX, // X position
-		buttonY + elementHeight + 50, // Y position
-		elementWidth, // Width
-		labelHeight, // Height
-		hWnd, // Parent window
-		NULL, // Menu ID
-		NULL, // Instance
-		NULL // Additional data
+		labelX + elementWidth + 10, // X position (right of the textbox)
+		buttonY + elementHeight + 50, // Y position (below the buttons)
+		elementWidth,         // Width
+		labelHeight,          // Height
+		hWnd,                 // Parent window
+		NULL,                 // Menu ID
+		NULL,                 // Instance
+		NULL                  // Additional data
 	);
 
+	// Create static label for Memory load, positioned below the CPU usage label
 	hRAM = CreateWindow(
-		L"STATIC", // Static class
-		L"Memory Load: 0%", // Label text
+		L"STATIC",             // Static class
+		L"Memory Load: 0%",    // Label text
 		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
-		centerX, // X position
-		buttonY + elementHeight + 90, // Y position (moved 40 units down)
-		elementWidth, // Width
-		labelHeight, // Height
-		hWnd, // Parent window
-		NULL, // Menu ID
-		NULL, // Instance
-		NULL // Additional data
+		labelX + elementWidth + 10, // X position (right of the textbox)
+		buttonY + elementHeight + 90, // Y position (below CPU label)
+		elementWidth,         // Width
+		labelHeight,          // Height
+		hWnd,                 // Parent window
+		NULL,                 // Menu ID
+		NULL,                 // Instance
+		NULL                  // Additional data
 	);
 }
+
+
 
 void SaveData(LPCSTR path) {
 	HANDLE FileToSave = CreateFileA(
