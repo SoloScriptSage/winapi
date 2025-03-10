@@ -478,8 +478,6 @@ void MainWndAddWidgets(HWND hWnd) {
 	);
 }
 
-
-
 void SaveData(LPCSTR path) {
 	HANDLE FileToSave = CreateFileA(
 		path, 
