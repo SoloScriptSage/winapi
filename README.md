@@ -53,5 +53,5 @@ Contributions are welcome! Feel free to submit issues or pull requests.
 This project is licensed under the MIT License.
 
 ## Contact
-For any inquiries, contact [your email] or visit [your GitHub profile].
+For any inquiries, contact vladyslavhirchukbusiness@outlook.com.
 
