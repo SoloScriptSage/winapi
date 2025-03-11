@@ -318,6 +318,7 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			MainWndAddWidgets(hWnd);
 			SetOpenFileParameters(hWnd);
 
+			SendMessage(hStaticControl, WM_SETFONT, (WPARAM)fontRectangle, TRUE);
 			// Post a message to start the threads after the widgets are added
 			PostMessage(hWnd, WM_START_THREADS, 0, 0);
 			break;
