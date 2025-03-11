@@ -31,11 +31,23 @@ typedef struct _SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION {
 } SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION;
 
 // Function prototypes
+
+// NTSTATUS: This is the return type of the function. 
+// It’s a Windows-specific data type used to represent status codes for functions. 
+// The function will return an NTSTATUS value, which is typically used to indicate success or error codes.
+
+// WINAPI: This is the calling convention of the function.
+// It tells the compiler how the function’s parameters should be passed and how the function should return.
+
+// pNtQuerySystemInformation: This is a pointer to the NtQuerySystemInformation function.
+// It’s a function pointer that will be used to call the NtQuerySystemInformation function dynamically.
+
+
 typedef NTSTATUS(WINAPI* pNtQuerySystemInformation)(
-	ULONG SystemInformationClass,
-	PVOID SystemInformation,
-	ULONG SystemInformationLength,
-	PULONG ReturnLength);
+	ULONG SystemInformationClass, // identifier that specifies the type of system information you want to retrieve (like system performance data, process information, etc.).
+	PVOID SystemInformation, // A pointer to a buffer where the requested system information will be returned.
+	ULONG SystemInformationLength, // The size of the buffer in bytes.
+	PULONG ReturnLength); // A pointer to a variable that will receive the size of the returned system information.
 
 #define SystemProcessorPerformanceInformation 8
 
@@ -95,8 +107,10 @@ void PrintPerCoreCPUUsage() {
 		ULONGLONG currKernel = currCPUInfo[i].KernelTime.QuadPart; // Get the current kernel time
 		ULONGLONG currUser = currCPUInfo[i].UserTime.QuadPart; // Get the current user time
 
-		ULONGLONG totalDiff = (currKernel - prevKernel) + (currUser - prevUser); // Calculate the total difference
-		ULONGLONG idleDiff = currIdle - prevIdle; // Calculate the idle difference
+		// Prevent underflow
+		ULONGLONG totalDiff = (currKernel > prevKernel ? (currKernel - prevKernel) : 0) +
+			(currUser > prevUser ? (currUser - prevUser) : 0);
+		ULONGLONG idleDiff = (currIdle > prevIdle ? (currIdle - prevIdle) : 0);
 
 		double usage; // Calculate the CPU usage
 		// Prevent division by zero
