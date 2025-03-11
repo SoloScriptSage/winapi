@@ -175,6 +175,23 @@ void UpdateMemoryUsage() {
 // int nCmdShow: The display options
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+	fontRectangle = CreateFontA(
+		20, // Height of the font
+		0, // Width of the font
+		0, // Angle of escapement
+		0, // Orientation angle
+		FW_NORMAL, // Font weight
+		FALSE, // Italic
+		FALSE, // Underline
+		FALSE, // Strikeout
+		ANSI_CHARSET, // Character set
+		OUT_DEFAULT_PRECIS, // Output precision
+		CLIP_DEFAULT_PRECIS, // Clipping precision
+		DEFAULT_QUALITY, // Output quality
+		DEFAULT_PITCH, // Pitch and family
+		"Consolas" // Font name
+	);
+
 	// Create a new window class for the main window
 	WNDCLASS SoftwareMainClass = NewWindowClass(
 		(HBRUSH)COLOR_WINDOW, // Background color of the window
@@ -280,10 +297,12 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
 					break;
 				case BTN_READ_CLR:
-					brushRectangle = CreateSolidBrush(RGB(GetDlgItemInt(hWnd, DLG_INDEX_COLOR_R, FALSE, FALSE),
-						GetDlgItemInt(hWnd, DLG_INDEX_COLOR_G, FALSE, FALSE),
-						GetDlgItemInt(hWnd, DLG_INDEX_COLOR_B, FALSE, FALSE)
-					));
+					clrR = GetDlgItemInt(hWnd, DLG_INDEX_COLOR_R, NULL, FALSE);
+					clrG = GetDlgItemInt(hWnd, DLG_INDEX_COLOR_G, NULL, FALSE);
+					clrB = GetDlgItemInt(hWnd, DLG_INDEX_COLOR_B, NULL, FALSE);
+
+					brushRectangle = CreateSolidBrush(RGB(clrR, clrG, clrB));
+					fontColor = RGB(255 - clrR, 255 - clrG, 255 - clrB);
 
 					RedrawWindow(hWnd, NULL, NULL, RDW_UPDATENOW | RDW_INVALIDATE);
 					break;
@@ -319,6 +338,11 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		case WM_PAINT:
 			BeginPaint(hWnd, &ps);
 			FillRect(ps.hdc, &rc, brushRectangle);
+
+			SetBkMode(ps.hdc, TRANSPARENT);
+			SetTextColor(ps.hdc, fontColor);
+			SelectObject(ps.hdc, fontRectangle);
+			DrawTextA(ps.hdc, "Hello, WinAPI!", -1, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 			EndPaint(hWnd, &ps);
 			break;
