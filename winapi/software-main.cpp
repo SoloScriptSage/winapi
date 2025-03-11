@@ -18,16 +18,17 @@ using namespace std;
 HWND hCPU, hRAM, hNetwork; // Handles to the CPU, RAM, and Network labels
 atomic<bool> updateFlag = true; // Flag to control the update loop
 
-thread cpuThread;
-thread ramThread;
+thread cpuThread; // Thread for updating CPU usage
+thread ramThread; // Thread for updating RAM usage
 
+// Function prototypes
 typedef struct _SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION {
 	LARGE_INTEGER IdleTime;
 	LARGE_INTEGER KernelTime;
 	LARGE_INTEGER UserTime;
 } SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION;
 
-
+// Function prototypes
 typedef NTSTATUS(WINAPI* pNtQuerySystemInformation)(
 	ULONG SystemInformationClass,
 	PVOID SystemInformation,
@@ -43,20 +44,24 @@ ULONGLONG FileTimeToInt64(const FILETIME& ft) {
 
 vector<SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION> GetCPUInfo() {
 	static pNtQuerySystemInformation NtQuerySystemInformation =
-		(pNtQuerySystemInformation)GetProcAddress(GetModuleHandle(TEXT("ntdll.dll")), "NtQuerySystemInformation");
+		(pNtQuerySystemInformation)GetProcAddress(GetModuleHandle(TEXT("ntdll.dll")), "NtQuerySystemInformation"); // Get the address of NtQuerySystemInformation
 
+	// Check if the function was loaded successfully
 	if (!NtQuerySystemInformation) {
-		std::cerr << "Failed to load NtQuerySystemInformation\n";
+		cerr << "Failed to load NtQuerySystemInformation\n";
 		return {};
 	}
 
-	ULONG numProcessors = std::thread::hardware_concurrency();
-	std::vector<SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION> cpuInfo(numProcessors);
+
+	ULONG numProcessors = std::thread::hardware_concurrency(); // Get the number of processors
+	vector<SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION> cpuInfo(numProcessors); // Create a vector of CPU information
 
 	NTSTATUS status = NtQuerySystemInformation(SystemProcessorPerformanceInformation, cpuInfo.data(),
-		numProcessors * sizeof(SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION), nullptr);
+		numProcessors * sizeof(SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION), nullptr); // Get the CPU information
+
+	// Check if the function call was successful
 	if (status != 0) { // STATUS_SUCCESS = 0
-		std::cerr << "NtQuerySystemInformation failed\n";
+		cerr << "NtQuerySystemInformation failed\n";
 		return {};
 	}
 
@@ -64,34 +69,38 @@ vector<SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION> GetCPUInfo() {
 }
 
 void PrintPerCoreCPUUsage() {
-	auto prevCPUInfo = GetCPUInfo();
-	Sleep(1000); // Wait 1 second
-	auto currCPUInfo = GetCPUInfo();
+	auto prevCPUInfo = GetCPUInfo(); // Get the previous CPU information
+	Sleep(1000); // Wait 1 second 
+	auto currCPUInfo = GetCPUInfo(); // Get the current CPU information
 
+	// Check if the CPU information is empty
 	if (prevCPUInfo.empty() || currCPUInfo.empty()) {
 		std::cerr << "Failed to get CPU information\n";
 		return;
 	}
 
-	ULONG numProcessors = std::thread::hardware_concurrency();
-	std::wstring usageText = L"";
 
+	ULONG numProcessors = thread::hardware_concurrency(); // Get the number of processors
+	wstring usageText = L""; // Usage text
+
+	// Loop through each processor
 	for (ULONG i = 0; i < numProcessors; i++) {
-		ULONGLONG prevIdle = prevCPUInfo[i].IdleTime.QuadPart;
-		ULONGLONG prevKernel = prevCPUInfo[i].KernelTime.QuadPart;
-		ULONGLONG prevUser = prevCPUInfo[i].UserTime.QuadPart;
+		ULONGLONG prevIdle = prevCPUInfo[i].IdleTime.QuadPart; // Get the previous idle time
+		ULONGLONG prevKernel = prevCPUInfo[i].KernelTime.QuadPart; // Get the previous kernel time
+		ULONGLONG prevUser = prevCPUInfo[i].UserTime.QuadPart; // Get the previous user time
 
-		ULONGLONG currIdle = currCPUInfo[i].IdleTime.QuadPart;
-		ULONGLONG currKernel = currCPUInfo[i].KernelTime.QuadPart;
-		ULONGLONG currUser = currCPUInfo[i].UserTime.QuadPart;
+		ULONGLONG currIdle = currCPUInfo[i].IdleTime.QuadPart; // Get the current idle time
+		ULONGLONG currKernel = currCPUInfo[i].KernelTime.QuadPart; // Get the current kernel time
+		ULONGLONG currUser = currCPUInfo[i].UserTime.QuadPart; // Get the current user time
 
-		ULONGLONG totalDiff = (currKernel - prevKernel) + (currUser - prevUser);
-		ULONGLONG idleDiff = currIdle - prevIdle;
+		ULONGLONG totalDiff = (currKernel - prevKernel) + (currUser - prevUser); // Calculate the total difference
+		ULONGLONG idleDiff = currIdle - prevIdle; // Calculate the idle difference
 
-		double usage = (totalDiff - idleDiff) * 100.0 / totalDiff;
-		usageText += L"CPU Core " + std::to_wstring(i) + L": " + std::to_wstring(usage) + L"% usage\n";
+		double usage = (totalDiff - idleDiff) * 100.0 / totalDiff; // Calculate the CPU usage
+		usageText += L"CPU Core " + std::to_wstring(i) + L": " + std::to_wstring(usage) + L"% usage\n"; // Add the CPU usage to the text
 	}
 
+	// Update the CPU label
 	if (hCPU) {
 		SetWindowText(hCPU, usageText.c_str());
 	}
@@ -371,7 +380,6 @@ void MainWndAddMenus(HWND hWnd) {
 
 	// Add the "File" menu to the main menu
 	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, L"File");
-
 	AppendMenu(hNewMenu, MF_STRING, NULL, L"Project");
 	AppendMenu(hNewMenu, MF_STRING, NULL, L"File");
 	AppendMenu(hNewMenu, MF_STRING, NULL, L"Repository");
@@ -624,6 +632,10 @@ void SaveData(LPCSTR path) {
 
 	DWORD bytesIterated; // Bytes written to the file
 	WriteFile(FileToSave, saveBuffer, saveLength, &bytesIterated, NULL); // Write the text to the file
+
+	// **Explicitly truncate the file after writing**
+	SetFilePointer(FileToSave, bytesIterated, NULL, FILE_BEGIN); // Move pointer to the correct position
+	SetEndOfFile(FileToSave); // Truncate anything beyond the written data
 
 	CloseHandle(FileToSave); // Close the file
 	delete[] saveBuffer; // Delete the buffer
