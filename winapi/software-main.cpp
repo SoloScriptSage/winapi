@@ -280,10 +280,12 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
 					break;
 				case BTN_READ_CLR:
-					RGB(GetDlgItemInt(hWnd, DLG_INDEX_COLOR_R, FALSE, FALSE),
+					brushRectangle = CreateSolidBrush(RGB(GetDlgItemInt(hWnd, DLG_INDEX_COLOR_R, FALSE, FALSE),
 						GetDlgItemInt(hWnd, DLG_INDEX_COLOR_G, FALSE, FALSE),
 						GetDlgItemInt(hWnd, DLG_INDEX_COLOR_B, FALSE, FALSE)
-					);
+					));
+
+					RedrawWindow(hWnd, NULL, NULL, RDW_UPDATENOW | RDW_INVALIDATE);
 					break;
 				case BTN_CLS:
 					SetWindowText(hEditControl, L"");
@@ -313,6 +315,12 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 				ramThread.join();
 
 			PostQuitMessage(0);
+			break;
+		case WM_PAINT:
+			BeginPaint(hWnd, &ps);
+			FillRect(ps.hdc, &rc, brushRectangle);
+
+			EndPaint(hWnd, &ps);
 			break;
 		default:
 			return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -458,7 +466,7 @@ void MainWndAddWidgets(HWND hWnd) {
 		30,          // Width - 30
 		25,         // Height - 30
 		hWnd,                  // Parent window
-		/*(HMENU)DIGIT_INDEX_R*/NULL, // Menu ID
+		(HMENU)DLG_INDEX_COLOR_R, // Menu ID
 		NULL,                  // Instance
 		NULL                   // Additional data
 	);
@@ -478,7 +486,7 @@ void MainWndAddWidgets(HWND hWnd) {
 		NULL                   // Additional data
 	);
 	
-	// Create a textbox to the right of the label R
+	// Create a textbox to the right of the label G
 	CreateWindow(
 		L"EDIT",               // Edit class
 		L"0",                  // Default text
@@ -488,7 +496,7 @@ void MainWndAddWidgets(HWND hWnd) {
 		30,          // Width - 30
 		25,         // Height - 30
 		hWnd,                  // Parent window
-		/*(HMENU)DIGIT_INDEX_R*/NULL, // Menu ID
+		(HMENU)DLG_INDEX_COLOR_G, // Menu ID
 		NULL,                  // Instance
 		NULL                   // Additional data
 	);
@@ -518,7 +526,7 @@ void MainWndAddWidgets(HWND hWnd) {
 		30,          // Width - 30
 		25,         // Height - 30
 		hWnd,                  // Parent window
-		/*(HMENU)DIGIT_INDEX_R*/NULL, // Menu ID
+		(HMENU)DLG_INDEX_COLOR_B, // Menu ID
 		NULL,                  // Instance
 		NULL                   // Additional data
 	);
@@ -538,8 +546,11 @@ void MainWndAddWidgets(HWND hWnd) {
 		NULL                  // Additional data
 	);
 
-	// Create static label for CPU usage, positioned to the right of the textbox
+	// x1 - 10 // y1 - 350
+	// x2 - 310 // y2 - 375
+	rc = {310, 380, 10, 415}; // x2, y1, x1, y2
 
+	// Create static label for CPU usage, positioned to the right of the textbox
 	hCPU = CreateWindow(
 		L"STATIC",             // Static class
 		L"CPU Usage: 0%",      // Label text
