@@ -25,8 +25,8 @@ WinAPI System Monitor is a Windows application built using the Windows API (WinA
 ### Build Instructions
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/winapi-system-monitor.git
-   cd winapi-system-monitor
+   git clone https://github.com/SoloScriptSage/winapi.git
+   cd winapi
    ```
 2. Open the project in Visual Studio.
 3. Build the project (`Ctrl + Shift + B`).
