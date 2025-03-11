@@ -33,6 +33,10 @@
 #define DLG_INDEX_COLOR_G 202
 #define DLG_INDEX_COLOR_B 203
 
+HFONT fontRectangle; // Font
+COLORREF fontColor; // Color
+int clrR = 0, clrG = 0, clrB = 0; // RGB values
+
 HBRUSH brushRectangle; // Background color
 PAINTSTRUCT ps; // Paint structure
 RECT rc; // Rectangle structure
