@@ -7,7 +7,10 @@
 #include "software-definitions.h" // Include the software definitions header file
 #include <string> // Include the string header file
 #include <vector>
-
+#include <iomanip> // Include for setprecision
+#include <sstream> // Include for stringstream
+#include <algorithm> // Required for std::clamp
+#include <atomic> // Include the atomic header file
 
 #pragma comment(lib, "iphlpapi.lib") // Link the iphlpapi library
 
@@ -21,11 +24,10 @@ atomic<bool> updateFlag = true; // Flag to control the update loop
 thread cpuThread; // Thread for updating CPU usage
 thread ramThread; // Thread for updating RAM usage
 
-// Function prototypes
 typedef struct _SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION {
-	LARGE_INTEGER IdleTime;
-	LARGE_INTEGER KernelTime;
-	LARGE_INTEGER UserTime;
+	LARGE_INTEGER IdleTime; //  represents a 64-bit integer (used for high-precision time values). stores the amount of time the processor has spent idle (doing nothing).
+	LARGE_INTEGER KernelTime; // the total time the processor has spent executing kernel-mode code (system-level operations like drivers or OS tasks).
+	LARGE_INTEGER UserTime; // the total time the processor has spent executing user-mode code (applications or user tasks).
 } SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION;
 
 // Function prototypes
@@ -96,8 +98,22 @@ void PrintPerCoreCPUUsage() {
 		ULONGLONG totalDiff = (currKernel - prevKernel) + (currUser - prevUser); // Calculate the total difference
 		ULONGLONG idleDiff = currIdle - prevIdle; // Calculate the idle difference
 
-		double usage = (totalDiff - idleDiff) * 100.0 / totalDiff; // Calculate the CPU usage
-		usageText += L"CPU Core " + std::to_wstring(i) + L": " + std::to_wstring(usage) + L"% usage\n"; // Add the CPU usage to the text
+		double usage; // Calculate the CPU usage
+		// Prevent division by zero
+		if (totalDiff == 0) {
+			usage = 0.0;
+		}
+		else {
+			usage = (1.0 - (double)idleDiff / totalDiff) * 100.0;
+		}
+
+		// Clamp the value between 0 and 100
+		usage = max(0.0, min(usage, 100.0));
+
+		wstringstream stream;
+		stream << fixed << setprecision(2) << usage; // Set the precision of the stream
+
+		usageText += L"CPU Core " + std::to_wstring(i) + L": " + stream.str() + L"% usage\n"; // Add the CPU usage to the text
 	}
 
 	// Update the CPU label
@@ -106,50 +122,8 @@ void PrintPerCoreCPUUsage() {
 	}
 }
 
-// Get the CPU usage
-double GetCPUUsage() {
-	static ULONGLONG prevIdleTime = 0, prevKernelTime = 0, prevUserTime = 0;
-	FILETIME idleTime, kernelTime, userTime;
 
-	if (!GetSystemTimes(&idleTime, &kernelTime, &userTime)) {
-		return -1; // Failed to retrieve times
-	}
-
-	ULONGLONG idle = FileTimeToInt64(idleTime);
-	ULONGLONG kernel = FileTimeToInt64(kernelTime);
-	ULONGLONG user = FileTimeToInt64(userTime);
-
-	if (prevIdleTime == 0) { // First call, store initial values
-		prevIdleTime = idle;
-		prevKernelTime = kernel;
-		prevUserTime = user;
-		return 0.0;
-	}
-
-	ULONGLONG idleDiff = idle - prevIdleTime;
-	ULONGLONG kernelDiff = kernel - prevKernelTime;
-	ULONGLONG userDiff = user - prevUserTime;
-
-	prevIdleTime = idle;
-	prevKernelTime = kernel;
-	prevUserTime = user;
-
-	ULONGLONG totalTime = kernelDiff + userDiff;
-	if (totalTime == 0) {
-		wprintf(L"CPU Time Difference is zero, skipping update\n");
-		return 0.0;  // Avoid division by zero
-	}
-
-	double cpuUsage = 100.0 * (1.0 - (static_cast<double>(idleDiff) / totalTime));
-
-	// Debugging output
-	wprintf(L"CPU Usage: %.2f%% (IdleDiff: %llu, KernelDiff: %llu, UserDiff: %llu)\n", cpuUsage, idleDiff, kernelDiff, userDiff);
-
-	return cpuUsage;
-}
-
-
-
+// Function to get the memory usage
 void GetMemoryUsage(HWND hWND) {
 	MEMORYSTATUSEX statex; // Memory status
 	statex.dwLength = sizeof(statex); // Set the length of the memory status
@@ -338,10 +312,16 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			ramThread = thread(UpdateMemoryUsage); // Create and start the thread for memory usage
 			break;
 		case WM_DESTROY:
+
+			updateFlag = false;
+
 			if (cpuThread.joinable())
 				cpuThread.join();
 			if (ramThread.joinable())
-				ramThread.join();
+				ramThread.join();			
+
+			DeleteObject(brushRectangle);
+			DeleteObject(fontRectangle);
 
 			PostQuitMessage(0);
 			break;
@@ -676,25 +656,4 @@ void SetOpenFileParameters(HWND hWND) {
 	ofn.nMaxFileTitle = 0;
 	ofn.lpstrInitialDir = "D:\\Projects\\winapi";
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-}
-
-void UpdateStats() {
-	while (true) {
-		double cpuUsage = GetCPUUsage(); // Get the CPU usage
-
-		MEMORYSTATUS statex; // Memory status
-		statex.dwLength = sizeof(statex); // Set the length of the memory status
-		
-		wchar_t cpuBuffer[256]; // Buffer for the CPU usage
-		wchar_t ramBuffer[256]; // Buffer for the RAM usage
-
-		swprintf(cpuBuffer, 256, L"CPU Usage: %.2f%%\n", cpuUsage); // Print the CPU usage
-		swprintf(ramBuffer, 256, L"Memory Load: %ld%%\n", statex.dwMemoryLoad); // Print the memory load
-
-		// Update the UI in the main thread
-
-		SetWindowText(hRAM, ramBuffer); // Set the text of the RAM window
-
-		Sleep(1000); // Sleep for 1 second
-	}
 }
