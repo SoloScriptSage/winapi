@@ -77,13 +77,14 @@ void MainWndAddMenus(HWND hWnd);
 void MainWndAddWidgets(HWND hWnd);
 
 
-double GetCPUUsage(); // Function to get the CPU usage
-void GetMemoryUsage(); // Function to get the memory usage
-void GetDiskUsage(); // Function to get the disk usage
-void GetNetworkUsage(); //	Function to get the network usage
+void PrintPerCoreCPUUsage(); // Function to print the CPU usage per core
+void GetMemoryUsage(HWND hWND); // Function to get the memory usage
+
+void GetDiskUsage(); // Function to get the disk usage (future development)
+void GetNetworkUsage(); //	Function to get the network usage (future development)
+
 void SaveData(LPCSTR path);
 void LoadData(LPCSTR path);
 void SetOpenFileParameters(HWND hWND);
-void UpdateStats();
 
 #endif // SOFTWARE_DEFINITIONS_H
