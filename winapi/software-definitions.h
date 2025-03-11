@@ -29,9 +29,13 @@
 
 #define MAX_PATH 260
 
-#define DLG_INDEX_COLOR_R
-#define DLG_INDEX_COLOR_G
-#define DLG_INDEX_COLOR_B
+#define DLG_INDEX_COLOR_R 201
+#define DLG_INDEX_COLOR_G 202
+#define DLG_INDEX_COLOR_B 203
+
+HBRUSH brushRectangle; // Background color
+PAINTSTRUCT ps; // Paint structure
+RECT rc; // Rectangle structure
 
 char Buffer[TEXT_BUFFER_SIZE];
 int readChars;
