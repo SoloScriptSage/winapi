@@ -379,12 +379,15 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	}
 }
 
+// Widgets and Menus
+
 void MainWndAddMenus(HWND hWnd) {
-	HMENU hMenu = CreateMenu(); // Create a new menu
+	HMENU hMenu = CreateMenu(); // Create a general menu
 	
-	HMENU hFileMenu = CreateMenu(); // Add a "File" menu
-	HMENU hNewMenu = CreateMenu();
-	
+	HMENU hFileMenu = CreateMenu(); // Create a "File" menu
+	HMENU hNewMenu = CreateMenu(); // Create a "New" menu
+	HMENU hEditMenu = CreateMenu(); // Create an "Edit" menu
+
 	// hFileMenu is the handle to the "File" menu
 	// MF_STRING is the menu item type
 	// 1 is the ID of the menu item
@@ -395,15 +398,15 @@ void MainWndAddMenus(HWND hWnd) {
 	AppendMenu(hFileMenu, MF_STRING, 2003, L"Save");
 	AppendMenu(hFileMenu, MF_SEPARATOR, NULL, NULL);
 	AppendMenu(hFileMenu, MF_STRING, 2004, L"Exit");
-
 	// Add the "File" menu to the main menu
 	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, L"File");
+	
+	// Adding elements to the "New" menu
 	AppendMenu(hNewMenu, MF_STRING, NULL, L"Project");
 	AppendMenu(hNewMenu, MF_STRING, NULL, L"File");
 	AppendMenu(hNewMenu, MF_STRING, NULL, L"Repository");
 
-	// Add an "Edit" menu
-	HMENU hEditMenu = CreateMenu();
+	// Adding elements to the "Edit" menu
 	AppendMenu(hEditMenu, MF_STRING, 2005, L"Cut");
 	AppendMenu(hEditMenu, MF_STRING, 2006, L"Copy");
 	AppendMenu(hEditMenu, MF_STRING, 2007, L"Paste");
@@ -631,6 +634,8 @@ void MainWndAddWidgets(HWND hWnd) {
 		NULL                  // Additional data
 	);
 }
+
+// File Processing
 
 void SaveData(LPCSTR path) {
 	HANDLE FileToSave = CreateFileA(
