@@ -24,6 +24,7 @@ atomic<bool> updateFlag = true; // Flag to control the update loop
 thread cpuThread; // Thread for updating CPU usage
 thread ramThread; // Thread for updating RAM usage
 thread diskThread; // Thread for updating disk usage
+thread networkThread; // Thread for updating network usage
 
 typedef struct _SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION {
 	LARGE_INTEGER IdleTime; //  represents a 64-bit integer (used for high-precision time values). stores the amount of time the processor has spent idle (doing nothing).
@@ -208,6 +209,70 @@ void UpdateDiskUsage() {
 	}
 }
 
+// Function to get the network information
+void GetNetworkUsage(HWND hWND) {
+	MIB_IFTABLE* pIfTable;
+	DWORD dwSize = 0;
+	DWORD dwRetVal = 0;
+
+	if (GetIfTable(NULL, &dwSize, false) == ERROR_INSUFFICIENT_BUFFER) {
+		pIfTable = (MIB_IFTABLE*)malloc(dwSize);
+		if (pIfTable == NULL) {
+			SetWindowText(hWND, L"Network Usage: Memory Error");
+			return;
+		}
+	}
+	else {
+		SetWindowText(hWND, L"Network Usage: Failed");
+		return;
+	}
+
+	if ((dwRetVal = GetIfTable(pIfTable, &dwSize, false)) == NO_ERROR) {
+		ULONGLONG totalSent = 0, totalReceived = 0;
+
+		for (DWORD i = 0; i < pIfTable->dwNumEntries; i++) {
+			// Prefer ullOutOctets if available (64-bit)
+			ULONGLONG sentBytes = (pIfTable->table[i].dwOutOctets);
+			ULONGLONG receivedBytes = (pIfTable->table[i].dwInOctets);
+
+			if (pIfTable->table[i].dwType == IF_TYPE_ETHERNET_CSMACD ||
+				pIfTable->table[i].dwType == IF_TYPE_IEEE80211) { // Ethernet or WiFi
+				totalSent += sentBytes;
+				totalReceived += receivedBytes;
+			}
+		}
+
+		static ULONGLONG prevSent = 0, prevReceived = 0;
+
+		// Handle counter resets (e.g., if network interface is reconnected)
+		if (prevSent > totalSent) prevSent = totalSent;
+		if (prevReceived > totalReceived) prevReceived = totalReceived;
+
+		ULONGLONG sentSpeed = totalSent - prevSent;
+		ULONGLONG receivedSpeed = totalReceived - prevReceived;
+
+		prevSent = totalSent;
+		prevReceived = totalReceived;
+
+		wchar_t buffer[256];
+		swprintf(buffer, 256, L"Upload: %.2f KB/s | Download: %.2f KB/s",
+			sentSpeed / 1024.0, receivedSpeed / 1024.0);
+		SetWindowText(hWND, buffer);
+	}
+	else {
+		SetWindowText(hWND, L"Network Usage: Error");
+	}
+
+	free(pIfTable);
+}
+
+void UpdateNetworkUsage() {
+	while (updateFlag) {
+		GetNetworkUsage(hNetwork);
+		this_thread::sleep_for(chrono::seconds(1)); // Update every second
+	}
+}
+
 // The entry point of the program
 // HINSTANCE hInstance: The instance of the program
 // HINSTANCE hPrevInstance: The previous instance of the program
@@ -259,7 +324,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE, // Window style
 		CW_USEDEFAULT, // X position
 		CW_USEDEFAULT, // Y position
-		600, // Width
+		700, // Width
 		500, // Height
 		NULL, // Parent window
 		NULL, // Menu
@@ -368,16 +433,16 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			cpuThread = thread(UpdateCPUUsage); // Create and start the thread for CPU usage
 			ramThread = thread(UpdateMemoryUsage); // Create and start the thread for memory usage
 			diskThread = thread(UpdateDiskUsage); // Create and start the thread for disk usage
+			networkThread = thread(UpdateNetworkUsage); // Start network monitoring
+
 			break;
 		case WM_DESTROY:
 			updateFlag = false;
 
-			if (cpuThread.joinable())
-				cpuThread.join();
-			if (ramThread.joinable())
-				ramThread.join();			
-			if (diskThread.joinable())
-				ramThread.join();
+			if (cpuThread.joinable()) cpuThread.join();
+			if (ramThread.joinable()) ramThread.join();			
+			if (diskThread.joinable()) ramThread.join();
+			if (networkThread.joinable()) networkThread.join();
 
 			DeleteObject(brushRectangle);
 			DeleteObject(fontRectangle);
@@ -661,6 +726,20 @@ void MainWndAddWidgets(HWND hWnd) {
 		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
 		325, // X position (right of the textbox)
 		355, // Y position (below CPU label)
+		300,         // Width
+		20,          // Height
+		hWnd,                 // Parent window
+		NULL,                 // Menu ID
+		NULL,                 // Instance
+		NULL                  // Additional data
+	);
+	
+	hNetwork = CreateWindow(
+		L"STATIC",             // Static class
+		L"Network Usage: 0 bytes sent, 0 bytes received",    // Label text
+		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
+		325, // X position (right of the textbox)
+		375, // Y position (below CPU label)
 		300,         // Width
 		20,          // Height
 		hWnd,                 // Parent window
