@@ -18,11 +18,12 @@
 
 using namespace std;
 
-HWND hCPU, hRAM, hNetwork; // Handles to the CPU, RAM, and Network labels
+HWND hCPU, hRAM, hNetwork, hDisk; // Handles to the CPU, RAM, and Network labels
 atomic<bool> updateFlag = true; // Flag to control the update loop
 
 thread cpuThread; // Thread for updating CPU usage
 thread ramThread; // Thread for updating RAM usage
+thread diskThread; // Thread for updating disk usage
 
 typedef struct _SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION {
 	LARGE_INTEGER IdleTime; //  represents a 64-bit integer (used for high-precision time values). stores the amount of time the processor has spent idle (doing nothing).
@@ -59,6 +60,7 @@ typedef NTSTATUS(WINAPI* pNtQuerySystemInformation)(
 
 #define SystemProcessorPerformanceInformation 8
 
+// Function to get the CPU information
 vector<SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION> GetCPUInfo() {
 	// This line retrieves the address of the NtQuerySystemInformation function from 
 	// the ntdll.dll library and assigns it to the NtQuerySystemInformation function pointer.
@@ -105,7 +107,7 @@ vector<SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION> GetCPUInfo() {
 
 	return cpuInfo;
 }
-
+// Function to print the CPU usage per core
 void PrintPerCoreCPUUsage() {
 	auto prevCPUInfo = GetCPUInfo(); // Get the previous CPU information
 	Sleep(1000); // Wait 1 second 
@@ -159,7 +161,13 @@ void PrintPerCoreCPUUsage() {
 		SetWindowText(hCPU, usageText.c_str());
 	}
 }
-
+// Thread function for updating CPU usage
+void UpdateCPUUsage() {
+	while (updateFlag) {
+		PrintPerCoreCPUUsage(); // This now prints per-core CPU usage
+		this_thread::sleep_for(chrono::seconds(1)); // Update every second
+	}
+}
 
 // Function to get the memory usage
 void GetMemoryUsage(HWND hWND) {
@@ -171,21 +179,32 @@ void GetMemoryUsage(HWND hWND) {
 		swprintf(buffer, 256, L"Memory Load: %ld%%\n", statex.dwMemoryLoad); // Print the memory load
 		SetWindowText(hWND, buffer); // Set the text of the window
 	}
-}
-
-// Thread function for updating CPU usage
-void UpdateCPUUsage() {
-	while (updateFlag) {
-		PrintPerCoreCPUUsage(); // This now prints per-core CPU usage
-		this_thread::sleep_for(chrono::seconds(1)); // Update every second
-	}
-}
-
-// Thread function for updating memory usage
+}// Thread function for updating memory usage
 void UpdateMemoryUsage() {
 	while (updateFlag) {
 		GetMemoryUsage(hRAM); // Get the memory usage
 		this_thread::sleep_for(chrono::seconds(1)); // Sleep for 1 second
+	}
+}
+
+// Function to get the disk information
+void GetDiskUsage(HWND hWND) {
+	ULARGE_INTEGER freeBytesAvailable, totalBytes, freeBytes;
+
+	if (GetDiskFreeSpaceExA("C:\\", &freeBytesAvailable, &totalBytes, &freeBytes)) {
+		char buffer[256];
+		snprintf(buffer, 256, "Disk Usage: %.2f%%",
+			(1.0 - ((double)freeBytes.QuadPart / totalBytes.QuadPart)) * 100.0);
+		SetWindowTextA(hWND, buffer);
+	}
+	else {
+		SetWindowTextA(hWND, "Disk Usage: Error");
+	}
+}
+void UpdateDiskUsage() {
+	while (updateFlag) {
+		GetDiskUsage(hDisk);
+		this_thread::sleep_for(chrono::seconds(1));
 	}
 }
 
@@ -348,15 +367,17 @@ LRESULT CALLBACK SoftwareMainProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			// Start the threads after widgets are added
 			cpuThread = thread(UpdateCPUUsage); // Create and start the thread for CPU usage
 			ramThread = thread(UpdateMemoryUsage); // Create and start the thread for memory usage
+			diskThread = thread(UpdateDiskUsage); // Create and start the thread for disk usage
 			break;
 		case WM_DESTROY:
-
 			updateFlag = false;
 
 			if (cpuThread.joinable())
 				cpuThread.join();
 			if (ramThread.joinable())
 				ramThread.join();			
+			if (diskThread.joinable())
+				ramThread.join();
 
 			DeleteObject(brushRectangle);
 			DeleteObject(fontRectangle);
@@ -626,6 +647,20 @@ void MainWndAddWidgets(HWND hWnd) {
 		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
 		325, // X position (right of the textbox)
 		335, // Y position (below CPU label)
+		300,         // Width
+		20,          // Height
+		hWnd,                 // Parent window
+		NULL,                 // Menu ID
+		NULL,                 // Instance
+		NULL                  // Additional data
+	);
+
+	hDisk = CreateWindow(
+		L"STATIC",             // Static class
+		L"Disk Usage: 0%",    // Label text
+		WS_VISIBLE | WS_CHILD | SS_LEFT, // Label style
+		325, // X position (right of the textbox)
+		355, // Y position (below CPU label)
 		300,         // Width
 		20,          // Height
 		hWnd,                 // Parent window
