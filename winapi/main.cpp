@@ -11,12 +11,22 @@
 #include <sstream> // Include for stringstream
 #include <algorithm> // Required for std::clamp
 #include <atomic> // Include the atomic header file
+#include <chrono>
+
+#include "ui.h"
+#include "cpu_monitor.h"
+#include "ram_monitor.h"
+#include "disk_monitor.h"
+#include "network_monitor.h"
+#include "gpu_monitor.h"
+#include "alerts.h"
 
 #pragma comment(lib, "iphlpapi.lib") // Link the iphlpapi library
 
 #define WM_START_THREADS (WM_USER + 1)
 
 using namespace std;
+using namespace chrono;
 
 HWND hCPU, hRAM, hNetwork, hDisk; // Handles to the CPU, RAM, and Network labels
 atomic<bool> updateFlag = true; // Flag to control the update loop
@@ -25,6 +35,14 @@ thread cpuThread; // Thread for updating CPU usage
 thread ramThread; // Thread for updating RAM usage
 thread diskThread; // Thread for updating disk usage
 thread networkThread; // Thread for updating network usage
+thread alertThread(AlertThread); // Thread for showing alerts
+
+void AlertThread() {
+	while (updateFlag) {
+		CheckAndShowAlerts(); // Check and show alerts
+		this_thread::sleep_for(1s); // Sleep for 1 second
+	}
+}
 
 typedef struct _SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION {
 	LARGE_INTEGER IdleTime; //  represents a 64-bit integer (used for high-precision time values). stores the amount of time the processor has spent idle (doing nothing).
@@ -60,6 +78,8 @@ typedef NTSTATUS(WINAPI* pNtQuerySystemInformation)(
 // 8 – SystemProcessorPerformanceInformation(Processor performance statistics, like CPU usage, etc.)
 
 #define SystemProcessorPerformanceInformation 8
+
+
 
 // Function to get the CPU information
 vector<SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION> GetCPUInfo() {
@@ -110,6 +130,7 @@ vector<SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION> GetCPUInfo() {
 }
 // Function to print the CPU usage per core
 void PrintPerCoreCPUUsage() {
+	bool cpuOverloaded = false;
 	auto prevCPUInfo = GetCPUInfo(); // Get the previous CPU information
 	Sleep(1000); // Wait 1 second 
 	auto currCPUInfo = GetCPUInfo(); // Get the current CPU information
@@ -151,6 +172,9 @@ void PrintPerCoreCPUUsage() {
 		// Clamp the value between 0 and 100
 		usage = max(0.0, min(usage, 100.0));
 
+		if (usage > CPU_ALERT_THRESHOLD && ShouldShowAlert(lastCPUAlert)) {
+			cpuOverloaded = true;
+		}
 		wstringstream stream;
 		stream << fixed << setprecision(2) << usage; // Set the precision of the stream
 
@@ -161,6 +185,11 @@ void PrintPerCoreCPUUsage() {
 	if (hCPU) {
 		SetWindowText(hCPU, usageText.c_str());
 	}
+
+	// Display a message box if the CPU usage is high
+	/*if (cpuOverloaded) {
+		MessageBox(NULL, L"High CPU Usage Detected! Close some apps.", L"CPU Alert", MB_OK | MB_ICONWARNING);
+	}*/
 }
 // Thread function for updating CPU usage
 void UpdateCPUUsage() {
@@ -179,6 +208,11 @@ void GetMemoryUsage(HWND hWND) {
 		wchar_t buffer[256]; // Buffer for the memory status
 		swprintf(buffer, 256, L"Memory Load: %ld%%\n", statex.dwMemoryLoad); // Print the memory load
 		SetWindowText(hWND, buffer); // Set the text of the window
+
+		// Check if the memory load is above the threshold
+		if (statex.dwMemoryLoad > MEMORY_ALERT_THRESHOLD && ShouldShowAlert(lastRAMAlert)) {
+			MessageBox(NULL, L"High Memory Usage Detected! Close some apps.", L"Memory Alert", MB_OK | MB_ICONWARNING); // Display a message box
+		}
 	}
 }// Thread function for updating memory usage
 void UpdateMemoryUsage() {
@@ -193,10 +227,17 @@ void GetDiskUsage(HWND hWND) {
 	ULARGE_INTEGER freeBytesAvailable, totalBytes, freeBytes;
 
 	if (GetDiskFreeSpaceExA("C:\\", &freeBytesAvailable, &totalBytes, &freeBytes)) {
+		double diskUsage = (1.0 - ((double)freeBytes.QuadPart / totalBytes.QuadPart)) * 100.0;
+		
 		char buffer[256];
 		snprintf(buffer, 256, "Disk Usage: %.2f%%",
 			(1.0 - ((double)freeBytes.QuadPart / totalBytes.QuadPart)) * 100.0);
 		SetWindowTextA(hWND, buffer);
+
+		// Check if the disk usage is above the threshold
+		if (diskUsage > DISK_ALERT_THRESHOLD && ShouldShowAlert(lastRAMAlert)) {
+			MessageBox(NULL, L"High Disk Usage Detected! Free up some space.", L"Disk Alert", MB_OK | MB_ICONWARNING);
+		}
 	}
 	else {
 		SetWindowTextA(hWND, "Disk Usage: Error");
@@ -814,3 +855,4 @@ void SetOpenFileParameters(HWND hWND) {
 	ofn.lpstrInitialDir = "D:\\Projects\\winapi";
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 }
+

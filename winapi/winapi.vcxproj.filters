@@ -15,7 +15,28 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="software-main.cpp">
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpu_monitor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ram_monitor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="disk_monitor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="network_monitor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu_monitor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="alerts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -25,6 +46,27 @@
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cpu_monitor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ram_monitor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="disk_monitor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="network_monitor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu_monitor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="alerts.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

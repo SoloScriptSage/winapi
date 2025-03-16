@@ -33,6 +33,10 @@
 #define DLG_INDEX_COLOR_G 202
 #define DLG_INDEX_COLOR_B 203
 
+#define CPU_ALERT_THRESHOLD 80 // CPU usage alert threshold
+#define MEMORY_ALERT_THRESHOLD 80 // Memory usage alert threshold
+#define DISK_ALERT_THRESHOLD 80 // Disk usage alert threshold
+
 HFONT fontRectangle; // Font
 COLORREF fontColor; // Color
 int clrR = 0, clrG = 0, clrB = 0; // RGB values

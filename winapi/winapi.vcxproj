@@ -128,11 +128,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="software-main.cpp" />
+    <ClCompile Include="alerts.cpp" />
+    <ClCompile Include="cpu_monitor.cpp" />
+    <ClCompile Include="disk_monitor.cpp" />
+    <ClCompile Include="gpu_monitor.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="network_monitor.cpp" />
+    <ClCompile Include="ram_monitor.cpp" />
+    <ClCompile Include="ui.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="alerts.h" />
+    <ClInclude Include="cpu_monitor.h" />
+    <ClInclude Include="disk_monitor.h" />
+    <ClInclude Include="gpu_monitor.h" />
+    <ClInclude Include="network_monitor.h" />
+    <ClInclude Include="ram_monitor.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="software-definitions.h" />
+    <ClInclude Include="ui.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="winapi.rc" />
