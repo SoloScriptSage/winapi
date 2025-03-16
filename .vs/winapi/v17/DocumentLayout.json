@@ -1,0 +1,160 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Projects\\winapi\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|D:\\Projects\\winapi\\winapi\\network_monitor.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|solutionrelative:winapi\\network_monitor.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|D:\\Projects\\winapi\\winapi\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|solutionrelative:winapi\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|D:\\Projects\\winapi\\winapi\\ui.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|solutionrelative:winapi\\ui.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|D:\\Projects\\winapi\\winapi\\disk_monitor.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|solutionrelative:winapi\\disk_monitor.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|D:\\Projects\\winapi\\winapi\\ram_monitor.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|solutionrelative:winapi\\ram_monitor.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|D:\\Projects\\winapi\\winapi\\cpu_monitor.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|solutionrelative:winapi\\cpu_monitor.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|D:\\Projects\\winapi\\winapi\\alerts.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|solutionrelative:winapi\\alerts.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|D:\\Projects\\winapi\\winapi\\alerts.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2AC64456-1B61-473B-AEAF-A0CFE798EC16}|winapi\\winapi.vcxproj|solutionrelative:winapi\\alerts.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ui.cpp",
+              "DocumentMoniker": "D:\\Projects\\winapi\\winapi\\ui.cpp",
+              "RelativeDocumentMoniker": "winapi\\ui.cpp",
+              "ToolTip": "D:\\Projects\\winapi\\winapi\\ui.cpp",
+              "RelativeToolTip": "winapi\\ui.cpp",
+              "ViewState": "AgIAAMAAAAAAAAAAAAAAwPwAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-16T03:03:40.527Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "main.cpp",
+              "DocumentMoniker": "D:\\Projects\\winapi\\winapi\\main.cpp",
+              "RelativeDocumentMoniker": "winapi\\main.cpp",
+              "ToolTip": "D:\\Projects\\winapi\\winapi\\main.cpp",
+              "RelativeToolTip": "winapi\\main.cpp",
+              "ViewState": "AgIAAMsAAAAAAAAAAAAAAO0AAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-16T02:57:43.478Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "network_monitor.cpp",
+              "DocumentMoniker": "D:\\Projects\\winapi\\winapi\\network_monitor.cpp",
+              "RelativeDocumentMoniker": "winapi\\network_monitor.cpp",
+              "ToolTip": "D:\\Projects\\winapi\\winapi\\network_monitor.cpp",
+              "RelativeToolTip": "winapi\\network_monitor.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-16T03:03:07.749Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "disk_monitor.cpp",
+              "DocumentMoniker": "D:\\Projects\\winapi\\winapi\\disk_monitor.cpp",
+              "RelativeDocumentMoniker": "winapi\\disk_monitor.cpp",
+              "ToolTip": "D:\\Projects\\winapi\\winapi\\disk_monitor.cpp",
+              "RelativeToolTip": "winapi\\disk_monitor.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-16T03:02:58.757Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ram_monitor.cpp",
+              "DocumentMoniker": "D:\\Projects\\winapi\\winapi\\ram_monitor.cpp",
+              "RelativeDocumentMoniker": "winapi\\ram_monitor.cpp",
+              "ToolTip": "D:\\Projects\\winapi\\winapi\\ram_monitor.cpp",
+              "RelativeToolTip": "winapi\\ram_monitor.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-16T03:02:33.463Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "cpu_monitor.cpp",
+              "DocumentMoniker": "D:\\Projects\\winapi\\winapi\\cpu_monitor.cpp",
+              "RelativeDocumentMoniker": "winapi\\cpu_monitor.cpp",
+              "ToolTip": "D:\\Projects\\winapi\\winapi\\cpu_monitor.cpp",
+              "RelativeToolTip": "winapi\\cpu_monitor.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-16T03:01:02.456Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "alerts.cpp",
+              "DocumentMoniker": "D:\\Projects\\winapi\\winapi\\alerts.cpp",
+              "RelativeDocumentMoniker": "winapi\\alerts.cpp",
+              "ToolTip": "D:\\Projects\\winapi\\winapi\\alerts.cpp",
+              "RelativeToolTip": "winapi\\alerts.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-16T02:54:02.404Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "alerts.h",
+              "DocumentMoniker": "D:\\Projects\\winapi\\winapi\\alerts.h",
+              "RelativeDocumentMoniker": "winapi\\alerts.h",
+              "ToolTip": "D:\\Projects\\winapi\\winapi\\alerts.h",
+              "RelativeToolTip": "winapi\\alerts.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-03-16T02:53:57.927Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

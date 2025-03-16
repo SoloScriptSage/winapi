@@ -1,4 +1,4 @@
-﻿  software_main.cpp
-D:\Projects\winapi\winapi\software_main.cpp(71,1): warning C4715: 'SoftwareMainProcedure': not all control paths return a value
-MSVCRTD.lib(exe_main.obj) : error LNK2019: unresolved external symbol main referenced in function "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ)
-D:\Projects\winapi\x64\Debug\winapi.exe : fatal error LNK1120: 1 unresolved externals
+﻿  main.cpp
+D:\Projects\winapi\winapi\main.cpp(177,54): error C2065: 'lastCPUAlert': undeclared identifier
+D:\Projects\winapi\winapi\main.cpp(215,71): error C2065: 'lastRAMAlert': undeclared identifier
+D:\Projects\winapi\winapi\main.cpp(240,59): error C2065: 'lastRAMAlert': undeclared identifier

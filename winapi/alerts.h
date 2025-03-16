@@ -4,7 +4,7 @@
 #include <Windows.h>
 #include <chrono>
 
-bool ShouldShowAlert(steady_clock::time_point& lastAlertTime);
+bool ShouldShowAlert(std::chrono::steady_clock::time_point& lastAlertTime);
 void CheckAndShowAlerts();
 
 #endif // ALERTS_H
