@@ -7,10 +7,6 @@ extern int currentCPUUsage;  // Assume this is updated in `cpu_monitor.cpp`
 extern int currentRAMUsage;  // Assume this is updated in `ram_monitor.cpp`
 extern int currentDiskUsage; // Assume this is updated in `disk_monitor.cpp`
 
-const int CPU_ALERT_THRESHOLD = 90;
-const int RAM_ALERT_THRESHOLD = 80;
-const int DISK_ALERT_THRESHOLD = 90;
-
 auto lastCPUAlert = steady_clock::now();
 auto lastRAMAlert = steady_clock::now();
 auto lastDiskAlert = steady_clock::now();
@@ -32,7 +28,7 @@ void CheckAndShowAlerts() {
     if (currentCPUUsage > CPU_ALERT_THRESHOLD && ShouldShowAlert(lastCPUAlert)) {
         MessageBox(NULL, L"High CPU Usage! Close some apps.", L"CPU Alert", MB_OK | MB_ICONWARNING);
     }
-    if (currentRAMUsage > RAM_ALERT_THRESHOLD && ShouldShowAlert(lastRAMAlert)) {
+    if (currentRAMUsage > MEMORY_ALERT_THRESHOLD && ShouldShowAlert(lastRAMAlert)) {
         MessageBox(NULL, L"High RAM Usage! Close unused programs.", L"RAM Alert", MB_OK | MB_ICONWARNING);
     }
     if (currentDiskUsage > DISK_ALERT_THRESHOLD && ShouldShowAlert(lastDiskAlert)) {
