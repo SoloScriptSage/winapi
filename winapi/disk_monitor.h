@@ -5,3 +5,6 @@
 #include <cstdio>        // For snprintf
 #include <string>        // Optional: If you use string manipulation (though it's not directly used in the given code)
 #include <atomic>
+
+void GetDiskUsage(HWND hWND); // Function to get the disk information
+void UpdateDiskUsage();      // Function to run in a separate thread for continuous disk monitoring
