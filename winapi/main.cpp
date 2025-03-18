@@ -1,12 +1,13 @@
 #include "main.h" // Include the software definitions header file
 
-#include "ui.cpp"
-#include "cpu_monitor.cpp"
-#include "ram_monitor.cpp"
-#include "disk_monitor.cpp"
-#include "network_monitor.cpp"
-#include "gpu_monitor.cpp"
-#include "alerts.cpp"
+#include "ui.h"
+#include "cpu_monitor.h"
+#include "ram_monitor.h"
+#include "disk_monitor.h"
+#include "network_monitor.h"
+#include "gpu_monitor.h"
+#include "alerts.h"
+#include "globals.h"
 
 #pragma comment(lib, "iphlpapi.lib") // Link the iphlpapi library
 
