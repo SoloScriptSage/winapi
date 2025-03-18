@@ -1,11 +1,10 @@
 #include "disk_monitor.h"
 #include "alerts.h"
-#include "alerts.cpp"
-
+#include "globals.h"
 using namespace std;
 
-extern atomic<bool> updateFlag;
-extern HWND hDisk;
+atomic<bool> updateFlag;
+HWND hDisk;
 // Function to get the disk information
 void GetDiskUsage(HWND hWND) {
 	ULARGE_INTEGER freeBytesAvailable, totalBytes, freeBytes;
