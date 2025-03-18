@@ -1,3 +1,12 @@
+#include "ui.h"
+#include <Windows.h>
+
+// Global variables for UI controls
+HWND hStaticControl;
+HWND hEditControl;
+HWND hNumberControl;
+RECT rc;
+
 // Widgets and Menus
 
 void MainWndAddMenus(HWND hWnd) {
