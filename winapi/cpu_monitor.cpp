@@ -1,20 +1,21 @@
+#include "cpu_monitor.h"
+#include "alerts.h"
 
+using namespace std;
 
-typedef struct _SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION {
-	LARGE_INTEGER IdleTime; //  represents a 64-bit integer (used for high-precision time values). stores the amount of time the processor has spent idle (doing nothing).
-	LARGE_INTEGER KernelTime; // the total time the processor has spent executing kernel-mode code (system-level operations like drivers or OS tasks).
-	LARGE_INTEGER UserTime; // the total time the processor has spent executing user-mode code (applications or user tasks).
-} SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION;
+extern HWND hCPU; // Handle to the CPU usage label
+extern atomic<bool> updateFlag;
+extern auto lastCPUAlert;
 
 // NTSTATUS: This is the return type of the function. 
-// It’s a Windows-specific data type used to represent status codes for functions. 
+// Itâ€™s a Windows-specific data type used to represent status codes for functions. 
 // The function will return an NTSTATUS value, which is typically used to indicate success or error codes.
 
 // WINAPI: This is the calling convention of the function.
-// It tells the compiler how the function’s parameters should be passed and how the function should return.
+// It tells the compiler how the functionâ€™s parameters should be passed and how the function should return.
 
 // pNtQuerySystemInformation: This is a pointer to the NtQuerySystemInformation function.
-// It’s a function pointer that will be used to call the NtQuerySystemInformation function dynamically.
+// Itâ€™s a function pointer that will be used to call the NtQuerySystemInformation function dynamically.
 
 // The code defines a function pointer type, pNtQuerySystemInformation, 
 // which points to a function that can retrieve system information on Windows. 
@@ -31,14 +32,13 @@ typedef NTSTATUS(WINAPI* pNtQuerySystemInformation)(
 // The constant SystemProcessorPerformanceInformation corresponds to a specific type of information 
 // that NtQuerySystemInformation can return. In this case, it is used 
 // to request processor performance information, such as the usage statistics of the CPUs.
-// 8 – SystemProcessorPerformanceInformation(Processor performance statistics, like CPU usage, etc.)
+// 8 â€“ SystemProcessorPerformanceInformation(Processor performance statistics, like CPU usage, etc.)
 
 #define SystemProcessorPerformanceInformation 8
 
-
-
 // Function to get the CPU information
-vector<SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION> GetCPUInfo() {
+
+vector<SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION> RetrieveCPUInfo() {
 	// This line retrieves the address of the NtQuerySystemInformation function from 
 	// the ntdll.dll library and assigns it to the NtQuerySystemInformation function pointer.
 
@@ -48,7 +48,7 @@ vector<SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION> GetCPUInfo() {
 
 		// This retrieves the memory address of the NtQuerySystemInformation function in ntdll.dll by name.
 		GetProcAddress(
-			// This loads the ntdll.dll module into the process’s address space. 
+			// This loads the ntdll.dll module into the processâ€™s address space. 
 			// ntdll.dll is a critical system DLL that provides many low-level functions, including NtQuerySystemInformation.
 			GetModuleHandle(TEXT("ntdll.dll")),
 			"NtQuerySystemInformation"
@@ -71,7 +71,7 @@ vector<SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION> GetCPUInfo() {
 	// numProcessors * sizeof(SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION): This specifies the size of the buffer in bytes. 
 	// It's calculated by multiplying the number of processors by the size of each SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION structure.
 
-	// nullptr: This indicates that we don’t need the size of the returned information.
+	// nullptr: This indicates that we donâ€™t need the size of the returned information.
 
 	NTSTATUS status = NtQuerySystemInformation(SystemProcessorPerformanceInformation, cpuInfo.data(),
 		numProcessors * sizeof(SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION), nullptr); // Get the CPU information
@@ -87,9 +87,10 @@ vector<SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION> GetCPUInfo() {
 // Function to print the CPU usage per core
 void PrintPerCoreCPUUsage() {
 	bool cpuOverloaded = false;
-	auto prevCPUInfo = GetCPUInfo(); // Get the previous CPU information
+
+	auto prevCPUInfo = RetrieveCPUInfo(); // Get the previous CPU information`
 	Sleep(1000); // Wait 1 second 
-	auto currCPUInfo = GetCPUInfo(); // Get the current CPU information
+	auto currCPUInfo = RetrieveCPUInfo(); // Get the current CPU information
 
 	// Check if the CPU information is empty
 	if (prevCPUInfo.empty() || currCPUInfo.empty()) {
