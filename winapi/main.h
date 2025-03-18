@@ -1,11 +1,24 @@
 #ifndef SOFTWARE_DEFINITIONS_H
 #define SOFTWARE_DEFINITIONS_H
 
+#include <Windows.h> // Windows API header file
+#include <psapi.h> // Process Status API header file (for process information)
+#include <iphlpapi.h> // IP Helper API header file (for network information)
+#include <iostream> // Include the iostream header file (for console input/output)
+#include <thread> // Include the thread header file (for threading)
+#include "resource.h"
+#include <string> // Include the string header file
+#include <vector>
+#include <iomanip> // Include for setprecision
+#include <sstream> // Include for stringstream
+#include <algorithm> // Required for std::clamp
+#include <atomic> // Include the atomic header file
+#include <chrono>
+
 #define SAVE_FILE 1
 #define LOAD_FILE 2
 
 #define TEXT_BUFFER_SIZE	256
-#define DIGIT_INDEX_NUMBER 200
 
 #define BTN_CLICK_ME 1001  // Button ID
 #define BTN_EXIT     1002  // Button ID
@@ -29,13 +42,6 @@
 
 #define MAX_PATH 260
 
-#define DLG_INDEX_COLOR_R 201
-#define DLG_INDEX_COLOR_G 202
-#define DLG_INDEX_COLOR_B 203
-
-#define CPU_ALERT_THRESHOLD 80 // CPU usage alert threshold
-#define MEMORY_ALERT_THRESHOLD 80 // Memory usage alert threshold
-#define DISK_ALERT_THRESHOLD 80 // Disk usage alert threshold
 
 HFONT fontRectangle; // Font
 COLORREF fontColor; // Color
@@ -43,17 +49,11 @@ int clrR = 0, clrG = 0, clrB = 0; // RGB values
 
 HBRUSH brushRectangle; // Background color
 PAINTSTRUCT ps; // Paint structure
-RECT rc; // Rectangle structure
 
 char Buffer[TEXT_BUFFER_SIZE];
 int readChars;
 
 unsigned num = 0;
-
-HWND hNumberControl;
-HWND hStaticControl;
-HWND hEditControl; // Handle to the edit control
-
 
 char filename[MAX_PATH]; // File name
 OPENFILENAMEA ofn; // Open file dialog structure
@@ -80,7 +80,6 @@ void MainWndAddMenus(HWND hWnd);
 // This is a function declaration for adding widgets to the main window
 void MainWndAddWidgets(HWND hWnd);
 
-
 void PrintPerCoreCPUUsage(); // Function to print the CPU usage per core
 void GetMemoryUsage(HWND hWND); // Function to get the memory usage
 
@@ -90,5 +89,5 @@ void GetNetworkUsage(); //	Function to get the network usage (future development
 void SaveData(LPCSTR path);
 void LoadData(LPCSTR path);
 void SetOpenFileParameters(HWND hWND);
-
+ 
 #endif // SOFTWARE_DEFINITIONS_H
