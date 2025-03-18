@@ -1,6 +1,7 @@
 #include "network_monitor.h"
+#include "globals.h"
 
-extern atomic<bool> updateFlag;
+atomic<bool> updateFlag;
 
 // Function to get the network information
 void GetNetworkUsage(HWND hWND) {
