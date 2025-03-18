@@ -1,25 +1,12 @@
-#include <Windows.h> // Windows API header file
-#include <psapi.h> // Process Status API header file (for process information)
-#include <iphlpapi.h> // IP Helper API header file (for network information)
-#include <iostream> // Include the iostream header file (for console input/output)
-#include <thread> // Include the thread header file (for threading)
-#include "resource.h"
-#include "software-definitions.h" // Include the software definitions header file
-#include <string> // Include the string header file
-#include <vector>
-#include <iomanip> // Include for setprecision
-#include <sstream> // Include for stringstream
-#include <algorithm> // Required for std::clamp
-#include <atomic> // Include the atomic header file
-#include <chrono>
+#include "main.h" // Include the software definitions header file
 
-#include "ui.h"
-#include "cpu_monitor.h"
-#include "ram_monitor.h"
-#include "disk_monitor.h"
-#include "network_monitor.h"
-#include "gpu_monitor.h"
-#include "alerts.h"
+#include "ui.cpp"
+#include "cpu_monitor.cpp"
+#include "ram_monitor.cpp"
+#include "disk_monitor.cpp"
+#include "network_monitor.cpp"
+#include "gpu_monitor.cpp"
+#include "alerts.cpp"
 
 #pragma comment(lib, "iphlpapi.lib") // Link the iphlpapi library
 
