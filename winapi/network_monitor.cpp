@@ -1,3 +1,7 @@
+#include "network_monitor.h"
+
+extern atomic<bool> updateFlag;
+
 // Function to get the network information
 void GetNetworkUsage(HWND hWND) {
 	MIB_IFTABLE* pIfTable;
