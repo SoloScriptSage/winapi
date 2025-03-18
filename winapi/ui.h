@@ -27,3 +27,4 @@ void MainWndAddMenus(HWND hWnd);
 void MainWndAddWidgets(HWND hWnd);
 
 #endif // UI_H
+
