@@ -1,4 +1,5 @@
 #include "alerts.h"
+#include "globals.h"
 
 using namespace std;
 using namespace chrono;
@@ -6,10 +7,6 @@ using namespace chrono;
 extern int currentCPUUsage;  // Assume this is updated in `cpu_monitor.cpp`
 extern int currentRAMUsage;  // Assume this is updated in `ram_monitor.cpp`
 extern int currentDiskUsage; // Assume this is updated in `disk_monitor.cpp`
-
-auto lastCPUAlert = steady_clock::now();
-auto lastRAMAlert = steady_clock::now();
-auto lastDiskAlert = steady_clock::now();
 
 const int ALERT_INTERVAL = 30; // Alert interval in seconds
 
