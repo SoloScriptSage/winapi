@@ -9,8 +9,6 @@
 
 #pragma comment(lib, "iphlpapi.lib")
 
-extern HWND hNetwork; // Declare external network usage window handle
-
 // Function declarations
 void GetNetworkUsage(HWND hWND);
 void UpdateNetworkUsage();
