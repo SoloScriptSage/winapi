@@ -21,3 +21,4 @@ typedef struct _SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION {
 
 void PrintPerCoreCPUUsage();
 void UpdateCPUUsage();
+
