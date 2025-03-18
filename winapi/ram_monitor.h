@@ -12,9 +12,6 @@
 
 using namespace std;
 
-// Define a memory alert threshold
-#define MEMORY_ALERT_THRESHOLD 85 // Set the alert threshold to 85%
-
 // Function declarations
 void GetMemoryUsage(HWND hWND); // Function to get the current memory usage
 void UpdateMemoryUsage(); // Function to run in a separate thread for continuous memory monitoring
