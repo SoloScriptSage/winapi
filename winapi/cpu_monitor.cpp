@@ -1,11 +1,8 @@
 #include "cpu_monitor.h"
+#include "globals.h"
 #include "alerts.h"
 
 using namespace std;
-
-extern HWND hCPU; // Handle to the CPU usage label
-extern atomic<bool> updateFlag;
-extern auto lastCPUAlert;
 
 // NTSTATUS: This is the return type of the function. 
 // It’s a Windows-specific data type used to represent status codes for functions. 
