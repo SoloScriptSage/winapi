@@ -1,8 +1,6 @@
 #include "network_monitor.h"
 #include "globals.h"
 
-atomic<bool> updateFlag;
-
 // Function to get the network information
 void GetNetworkUsage(HWND hWND) {
 	MIB_IFTABLE* pIfTable;
