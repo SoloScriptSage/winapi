@@ -1,9 +1,6 @@
 #include "ram_monitor.h"
 #include "globals.h"
 
-extern HWND hRAM; // Handle to the CPU usage label
-extern atomic<bool> updateFlag;
-
 // Function to get the memory usage
 void GetMemoryUsage(HWND hWND) {
 	MEMORYSTATUSEX statex; // Memory status
