@@ -3,8 +3,6 @@
 #include "globals.h"
 using namespace std;
 
-atomic<bool> updateFlag;
-HWND hDisk;
 // Function to get the disk information
 void GetDiskUsage(HWND hWND) {
 	ULARGE_INTEGER freeBytesAvailable, totalBytes, freeBytes;
