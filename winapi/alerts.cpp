@@ -4,9 +4,9 @@
 using namespace std;
 using namespace chrono;
 
-extern int currentCPUUsage;  // Assume this is updated in `cpu_monitor.cpp`
-extern int currentRAMUsage;  // Assume this is updated in `ram_monitor.cpp`
-extern int currentDiskUsage; // Assume this is updated in `disk_monitor.cpp`
+int currentCPUUsage;  // Assume this is updated in `cpu_monitor.cpp`
+int currentRAMUsage;  // Assume this is updated in `ram_monitor.cpp`
+int currentDiskUsage; // Assume this is updated in `disk_monitor.cpp`
 
 const int ALERT_INTERVAL = 30; // Alert interval in seconds
 
