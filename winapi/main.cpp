@@ -16,9 +16,6 @@
 using namespace std;
 using namespace chrono;
 
-HWND hCPU, hRAM, hNetwork, hDisk; // Handles to the CPU, RAM, and Network labels
-atomic<bool> updateFlag = true; // Flag to control the update loop
-
 thread cpuThread; // Thread for updating CPU usage
 thread ramThread; // Thread for updating RAM usage
 thread diskThread; // Thread for updating disk usage
